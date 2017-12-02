@@ -1,0 +1,8 @@
+{
+  "body": "{\"name\":\"Course Test Name\", \"description\":\"lorem ipsum blah, blah\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
