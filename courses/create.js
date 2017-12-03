@@ -23,8 +23,8 @@ export async function main(event, context, callback) {
       description: data.description,
       status: 'unpublished',
       //these two will be added at patch stage
-      //picture: data.picture_ref,
-      //price: data.price,
+      //picture: '',
+      price: 39.99,
       createdAt: new Date().getTime()
     }
   };
@@ -33,6 +33,7 @@ export async function main(event, context, callback) {
     await dynamoDbLib.call("put", params);
     callback(null, success(params.Item));
   } catch (e) {
+    console.log(e);
     callback(null, failure({ status: false }));
   };
 

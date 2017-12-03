@@ -1,0 +1,11 @@
+{
+  "body": "{\"name\":\"brand new world\",\"description\":\"brand new content\", \"status\": \"published\", \"price\":40.01 ,\"picture\":\"new.jpg\"}",
+  "pathParameters": {
+    "id": "79712920-d7d3-11e7-9104-0da988476208"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
