@@ -54,6 +54,17 @@ functions:
           method: get
           cors: true
           authorizer: aws_iam
+  user:
+    # Defines an HTTP API endpoint that calls the main function in user.js
+    # - path: url path is /courses/user
+    # - method: GET request
+    handler: user.main
+    events:
+      - http:
+          path: courses/user
+          method: get
+          cors: true
+          authorizer: aws_iam
   list:
     # Defines an HTTP API endpoint that calls the main function in list.js
     # - path: url path is /notes
