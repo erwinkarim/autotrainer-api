@@ -17,8 +17,8 @@ export async function main(event, context, callback) {
     // - 'attachment': parsed from request body
     // - 'createdAt': current Unix timestamp
     Item: {
-      userId: event.requestContext.identity.cognitoIdentityId,
       courseId: uuid.v1(),
+      userId: event.requestContext.identity.cognitoIdentityId,
       name: data.name,
       description: data.description,
       status: 'unpublished',

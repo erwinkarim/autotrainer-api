@@ -1,7 +1,7 @@
 {
   "body": "{\"name\":\"brand new world\",\"description\":\"brand new content\", \"status\": \"published\", \"price\":40.01 ,\"picture\":\"new.jpg\"}",
   "pathParameters": {
-    "id": "79712920-d7d3-11e7-9104-0da988476208"
+    "id": "e49b6f90-dc91-11e7-97f6-d92ea8b13074"
   },
   "requestContext": {
     "identity": {

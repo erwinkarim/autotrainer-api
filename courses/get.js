@@ -1,14 +1,15 @@
 import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
 
+/*
+  TODO: change the partition key to courseId
+*/
 export async function main(event, context, callback) {
   const params = {
     TableName: "courses",
     // 'Key' defines the partition key and sort key of the item to be retrieved
-    // - 'userId': Identity Pool identity id of the authenticated user
     // - 'noteId': path parameter
     Key: {
-      userId: event.requestContext.identity.cognitoIdentityId,
       courseId: event.pathParameters.id
     }
   };
