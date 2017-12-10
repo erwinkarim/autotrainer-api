@@ -17,14 +17,16 @@ export async function main(event, context, callback) {
     },
     // 'UpdateExpression' defines the attributes to be updated
     // 'ExpressionAttributeValues' defines the value in the update expression
-    UpdateExpression: "SET #n = :name, description = :description, #s = :status, picture = :picture, price = :price ",
+    UpdateExpression: "SET #n = :name, tagline = :tagline, description = :description, #s = :status, picture = :picture, price = :price, key_points = :key_points",
     ConditionExpression: "userId = :userId",
     ExpressionAttributeValues: {
       ":name" : data.name ? data.name : null,
+      ":tagline" : data.tagline ? data.tagline : null,
       ":description" : data.description ? data.description : null,
       ":status" : data.status ? data.status : null,
       ":picture": data.picture ? data.picture : null,
       ":price" : data.price ? data.price : null,
+      ":key_points": data.key_points ? data.key_points : null,
       ":userId": event.requestContext.identity.cognitoIdentityId
     },
     ExpressionAttributeNames: {
