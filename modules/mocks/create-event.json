@@ -1,0 +1,8 @@
+{
+  "body": "{\"courseId\":\"course-test\", \"title\":\"Test title for the course\", \"description\":\"Lorem ipsum el savetour et. base of the things to come\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
