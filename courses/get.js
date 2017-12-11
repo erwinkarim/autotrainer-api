@@ -18,6 +18,7 @@ export async function main(event, context, callback) {
     const result = await dynamoDbLib.call("get", params);
     if (result.Item) {
       // Return the retrieved item
+      // TODO. indicate if current user own this resouce
       callback(null, success(result.Item));
     } else {
       callback(null, failure({ status: false, error: "Item not found." }));

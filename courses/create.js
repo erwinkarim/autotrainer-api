@@ -20,7 +20,6 @@ export async function main(event, context, callback) {
       courseId: uuid.v1(),
       userId: event.requestContext.identity.cognitoIdentityId,
       name: data.name,
-      tagline: '',
       description: data.description,
       status: 'unpublished',
       //these two will be added at patch stage
