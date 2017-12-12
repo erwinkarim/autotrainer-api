@@ -8,7 +8,7 @@ export async function main(event, context, callback) {
     // - 'userId': Identity Pool identity id of the authenticated user
     // - 'noteId': path parameter
     Key: {
-      courseId: event.queryParameters.courseId,
+      courseId: event.queryStringParameters.courseId,
       moduleId: event.pathParameters.id
     }
   };

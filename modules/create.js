@@ -12,6 +12,7 @@ export async function main(event, context, callback) {
       userId: event.requestContext.identity.cognitoIdentityId,
       title: data.title,
       description: data.description,
+      moduleType: data.moduleType,
       createdAt: new Date().getTime()
     }
   };

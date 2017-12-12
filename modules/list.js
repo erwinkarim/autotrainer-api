@@ -12,7 +12,7 @@ export async function main(event, context, callback) {
     //   of the authenticated user
     KeyConditionExpression: "courseId = :courseId",
     ExpressionAttributeValues: {
-      ":courseId": event.queryParameters.courseId
+      ":courseId": event.queryStringParameters.courseId
     }
   };
 
