@@ -102,7 +102,7 @@ var main = exports.main = function () {
               ExpressionAttributeValues: {
                 ":courseId": event.queryStringParameters.courseId
               },
-              ProjectionExpression: "courseId, moduleId, title, userId, description, createdAt"
+              ProjectionExpression: "courseId, moduleId, userId, moduleType, description, createdAt"
             };
             _context.prev = 1;
             _context.next = 4;
