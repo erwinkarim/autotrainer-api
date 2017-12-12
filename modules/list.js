@@ -13,7 +13,8 @@ export async function main(event, context, callback) {
     KeyConditionExpression: "courseId = :courseId",
     ExpressionAttributeValues: {
       ":courseId": event.queryStringParameters.courseId
-    }
+    },
+    ProjectionExpression: "courseId, moduleId, title, userId, description, createdAt"
   };
 
   try {
