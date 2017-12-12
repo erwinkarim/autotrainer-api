@@ -9,18 +9,17 @@ export async function main(event, context, callback) {
     // - 'userId': Identity Pool identity id of the authenticated user
     // - 'noteId': path parameter
     Key: {
-      courseId: event.queryParameters.courseId,
+      courseId: event.queryStringParameters.courseId,
       moduleId: event.pathParameters.id
     },
     ConditionExpression: "userId = :userId",
     // 'UpdateExpression' defines the attributes to be updated
     // 'ExpressionAttributeValues' defines the value in the update expression
-    UpdateExpression: "SET title = :title, description = :description, body = :body, module_type = :module_type",
+    UpdateExpression: "SET title = :title, description = :description, body = :body",
     ExpressionAttributeValues: {
       ":title": data.title ? data.title : null,
       ":description": data.description ? data.description : null,
       ":body": data.body ? data.body : null,
-      ":module_type": data.module_type ? data.module_type : null,
       ":userId": event.requestContext.identity.cognitoIdentityId
     },
     ReturnValues: "ALL_NEW"
