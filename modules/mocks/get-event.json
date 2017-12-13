@@ -1,13 +1,13 @@
 {
   "pathParameters": {
-    "id": "76ac1af0-de50-11e7-9514-658a5b7739d7"
+    "id": "06c53ac0-df0c-11e7-9283-3105385f3afa"
   },
-  "queryParameters":{
-    "courseId": "course-test"
+  "queryStringParameters":{
+    "courseId": "786e34c0-de39-11e7-918c-73a3bea17614"
   },
   "requestContext": {
     "identity": {
-      "cognitoIdentityId": "USER-SUB-1234"
+      "cognitoIdentityId": "ap-southeast-1:c03e6df4-c25a-46c1-8c4e-dca44866038f"
     }
   }
 }

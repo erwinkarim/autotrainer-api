@@ -85,50 +85,77 @@ var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, result;
+    var params, courseMetaParams, result, metaResult;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             params = {
               TableName: "modules",
-              // 'KeyConditionExpression' defines the condition for the query
-              // - 'userId = :userId': only return items with matching 'userId'
-              //   partition key
-              // 'ExpressionAttributeValues' defines the value in the condition
-              // - ':userId': defines 'userId' to be Identity Pool identity id
-              //   of the authenticated user
-              KeyConditionExpression: "courseId = :courseId",
-              ExpressionAttributeValues: {
-                ":courseId": event.queryStringParameters.courseId
-              },
-              ProjectionExpression: "courseId, moduleId, userId, moduleType, description, createdAt"
+              // 'Key' defines the partition key and sort key of the item to be retrieved
+              // - 'userId': Identity Pool identity id of the authenticated user
+              // - 'noteId': path parameter
+              Key: {
+                courseId: event.queryStringParameters.courseId,
+                moduleId: event.pathParameters.id
+              }
             };
-            _context.prev = 1;
-            _context.next = 4;
-            return dynamoDbLib.call("query", params);
 
-          case 4:
+            // TODO: some meta info about the course we in, if required
+
+            courseMetaParams = {
+              TableName: 'courses',
+              Key: {
+                courseId: event.queryStringParameters.courseId
+              },
+              ExpressionAttributeNames: { '#n': 'name' },
+              ProjectionExpression: "courseId, #n"
+            };
+            _context.prev = 2;
+            _context.next = 5;
+            return dynamoDbLib.call("get", params);
+
+          case 5:
             result = _context.sent;
 
-            // Return the matching list of items in response body
-            callback(null, (0, _responseLib.success)(result.Items));
-            _context.next = 12;
+            if (!result.Item) {
+              _context.next = 14;
+              break;
+            }
+
+            _context.next = 9;
+            return dynamoDbLib.call('get', courseMetaParams);
+
+          case 9:
+            metaResult = _context.sent;
+
+            result.Item.courseMeta = metaResult.Item;
+
+            // Return the retrieved item
+            callback(null, (0, _responseLib.success)(result.Item));
+            _context.next = 15;
             break;
 
-          case 8:
-            _context.prev = 8;
-            _context.t0 = _context["catch"](1);
+          case 14:
+            callback(null, (0, _responseLib.failure)({ status: false, error: "Item not found." }));
+
+          case 15:
+            _context.next = 21;
+            break;
+
+          case 17:
+            _context.prev = 17;
+            _context.t0 = _context["catch"](2);
 
             console.log(_context.t0);
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 12:
+          case 21:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[1, 8]]);
+    }, _callee, this, [[2, 17]]);
   }));
 
   return function main(_x, _x2, _x3) {
