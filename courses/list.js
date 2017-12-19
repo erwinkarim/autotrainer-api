@@ -2,7 +2,7 @@ import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
 
 /*
-  TODO: get recent courses instead of courses created by a user
+  get recent courses
 */
 export async function main(event, context, callback) {
   const params = {
@@ -13,10 +13,13 @@ export async function main(event, context, callback) {
     // 'ExpressionAttributeValues' defines the value in the condition
     // - ':userId': defines 'userId' to be Identity Pool identity id
     //   of the authenticated user
+    /*
     FilterExpression: "userId = :userId",
     ExpressionAttributeValues: {
       ":userId": event.requestContext.identity.cognitoIdentityId
     }
+    */
+    Limit: 20
   };
 
   try {

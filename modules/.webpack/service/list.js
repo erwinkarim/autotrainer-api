@@ -83,9 +83,6 @@ var _asyncToGenerator2 = __webpack_require__(2);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-/*
-  get the enrolment status of the course of a particular user
-*/
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
     var params, result;
@@ -94,28 +91,28 @@ var main = exports.main = function () {
         switch (_context.prev = _context.next) {
           case 0:
             params = {
-              TableName: "enrolment",
-              // 'Key' defines the partition key and sort key of the item to be retrieved
-              // - 'userId': Identity Pool identity id of the authenticated user
-              // - 'courseId': path parameter
-              Key: {
-                userId: event.requestContext.identity.cognitoIdentityId,
-                courseId: event.pathParameters.id
-              }
+              TableName: "modules",
+              // 'KeyConditionExpression' defines the condition for the query
+              // - 'userId = :userId': only return items with matching 'userId'
+              //   partition key
+              // 'ExpressionAttributeValues' defines the value in the condition
+              // - ':userId': defines 'userId' to be Identity Pool identity id
+              //   of the authenticated user
+              KeyConditionExpression: "courseId = :courseId",
+              ExpressionAttributeValues: {
+                ":courseId": event.queryStringParameters.courseId
+              },
+              ProjectionExpression: "courseId, moduleId, userId, moduleType, title, description, createdAt"
             };
             _context.prev = 1;
             _context.next = 4;
-            return dynamoDbLib.call("get", params);
+            return dynamoDbLib.call("query", params);
 
           case 4:
             result = _context.sent;
 
-            if (result.Item) {
-              // Return the retrieved item
-              callback(null, (0, _responseLib.success)(result.Item));
-            } else {
-              callback(null, (0, _responseLib.failure)({ status: false, error: "Item not found." }));
-            }
+            // Return the matching list of items in response body
+            callback(null, (0, _responseLib.success)(result.Items));
             _context.next = 12;
             break;
 

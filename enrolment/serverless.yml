@@ -1,4 +1,4 @@
-service: autotrainer-modules-api
+service: autotrainer-enrolment-api
 
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
@@ -69,10 +69,21 @@ functions:
     # Defines an HTTP API endpoint that calls the main function in get.js
     # - path: url path is /notes/{id}
     # - method: GET request
-    handler: get.main
+    handler: students.main
     events:
       - http:
           path: enrolment/{id}/students
           method: get
+          cors: true
+          authorizer: aws_iam
+  attend:
+    # Defines an HTTP API endpoint that calls the main function in get.js
+    # - path: url path is /notes/{id}
+    # - method: GET request
+    handler: attend.main
+    events:
+      - http:
+          path: enrolment/{id}/attend/{moduleId}
+          method: post
           cors: true
           authorizer: aws_iam

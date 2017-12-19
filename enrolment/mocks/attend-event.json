@@ -1,0 +1,10 @@
+{
+  "pathParameters": {
+    "id": "test-course", "moduleId":"test-class"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

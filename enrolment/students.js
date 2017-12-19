@@ -7,6 +7,7 @@ import { success, failure } from "./libs/response-lib";
 export async function main(event, context, callback) {
   const params = {
     TableName: "enrolment",
+    IndexName: 'courseId-index',
     // 'KeyConditionExpression' defines the condition for the query
     // - 'userId = :userId': only return items with matching 'userId'
     //   partition key
@@ -24,6 +25,7 @@ export async function main(event, context, callback) {
     // Return the matching list of items in response body
     callback(null, success(result.Items));
   } catch (e) {
+    console.log(e);
     callback(null, failure({ status: false }));
   }
 }
