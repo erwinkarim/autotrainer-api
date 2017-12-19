@@ -1,0 +1,8 @@
+{
+  "body": "{ \"courseId\":\"test-course\"}",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}
