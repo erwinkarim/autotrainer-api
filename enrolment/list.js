@@ -3,6 +3,7 @@ import { success, failure } from "./libs/response-lib";
 
 /*
   list all courses attended by a particular user
+  TODO: get enrolled courses info (title, etc
 */
 export async function main(event, context, callback) {
   const params = {
@@ -19,11 +20,40 @@ export async function main(event, context, callback) {
     }
   };
 
+  var result = null
   try {
-    const result = await dynamoDbLib.call("query", params);
+    result = await dynamoDbLib.call("query", params);
     // Return the matching list of items in response body
-    callback(null, success(result.Items));
+    //callback(null, success(result.Items));
   } catch (e) {
     callback(null, failure({ status: false }));
+  }
+  console.log('enrolment query:');
+  console.log(result.Items);
+
+  var courseIds = result.Items.map( (e,i) => { return { courseId:e.courseId}; });
+
+  //load course title
+  const courseTitleParams = {
+    RequestItems: {
+      "courses" : {
+        Keys: courseIds,
+        ExpressionAttributeNames: {"#name": "name"},
+        ProjectionExpression: "courseId, #name",
+      }
+    }
+  };
+  var result2 = null;
+
+  try {
+    result2 = await dynamoDbLib.call('batchGet', courseTitleParams);
+    result.Items.map( (c, i) => {
+      c["name"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).name
+    });
+    callback(null, success(result.Items));
+  } catch (e){
+    console.log(e);
+    callback(null, failure({status: false}));
+
   }
 }

@@ -84,35 +84,33 @@ var _asyncToGenerator2 = __webpack_require__(2);
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 /*
-  get recent courses
+  list all courses attended by a particular user
+  TODO: get enrolled courses info (title, etc
 */
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, result, enrolledCoursesParams, enrolledCoursesResults;
+    var params, result, courseIds, courseTitleParams, result2;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             params = {
-              TableName: "courses",
+              TableName: "enrolment",
               // 'KeyConditionExpression' defines the condition for the query
               // - 'userId = :userId': only return items with matching 'userId'
               //   partition key
               // 'ExpressionAttributeValues' defines the value in the condition
               // - ':userId': defines 'userId' to be Identity Pool identity id
               //   of the authenticated user
-              /*
-              FilterExpression: "userId = :userId",
+              KeyConditionExpression: "userId = :userId",
               ExpressionAttributeValues: {
                 ":userId": event.requestContext.identity.cognitoIdentityId
               }
-              */
-              Limit: 20
             };
             result = null;
             _context.prev = 2;
             _context.next = 5;
-            return dynamoDbLib.call("scan", params);
+            return dynamoDbLib.call("query", params);
 
           case 5:
             result = _context.sent;
@@ -126,40 +124,54 @@ var main = exports.main = function () {
             callback(null, (0, _responseLib.failure)({ status: false }));
 
           case 11:
+            console.log('enrolment query:');
+            console.log(result.Items);
 
-            // get current enrolled courses
-            enrolledCoursesParams = {
-              TableName: 'enrolment',
-              KeyConditionExpression: "userId = :userId",
-              ExpressionAttributeValues: {
-                ":userId": event.requestContext.identity.cognitoIdentityId
+            courseIds = result.Items.map(function (e, i) {
+              return { courseId: e.courseId };
+            });
+
+            //load course title
+
+            courseTitleParams = {
+              RequestItems: {
+                "courses": {
+                  Keys: courseIds,
+                  ExpressionAttributeNames: { "#name": "name" },
+                  ProjectionExpression: "courseId, #name"
+                }
               }
             };
-            enrolledCoursesResults = null;
-            _context.prev = 13;
-            _context.next = 16;
-            return dynamoDbLib.call('query', enrolledCoursesParams);
+            result2 = null;
+            _context.prev = 16;
+            _context.next = 19;
+            return dynamoDbLib.call('batchGet', courseTitleParams);
 
-          case 16:
-            enrolledCoursesResults = _context.sent;
+          case 19:
+            result2 = _context.sent;
 
-            result.Items["enrolled"] = enrolledCoursesResults;
+            result.Items.map(function (c, i) {
+              c["name"] = result2.Responses.courses.find(function (e) {
+                return e.courseId === c.courseId;
+              }).name;
+            });
             callback(null, (0, _responseLib.success)(result.Items));
-            _context.next = 24;
+            _context.next = 28;
             break;
 
-          case 21:
-            _context.prev = 21;
-            _context.t1 = _context["catch"](13);
+          case 24:
+            _context.prev = 24;
+            _context.t1 = _context["catch"](16);
 
+            console.log(_context.t1);
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 24:
+          case 28:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 8], [13, 21]]);
+    }, _callee, this, [[2, 8], [16, 24]]);
   }));
 
   return function main(_x, _x2, _x3) {

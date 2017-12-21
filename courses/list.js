@@ -5,7 +5,7 @@ import { success, failure } from "./libs/response-lib";
   get recent courses
 */
 export async function main(event, context, callback) {
-  const params = {
+  var params = {
     TableName: "courses",
     // 'KeyConditionExpression' defines the condition for the query
     // - 'userId = :userId': only return items with matching 'userId'
@@ -21,12 +21,31 @@ export async function main(event, context, callback) {
     */
     Limit: 20
   };
+  var result = null;
 
   try {
-    const result = await dynamoDbLib.call("scan", params);
+    result = await dynamoDbLib.call("scan", params);
     // Return the matching list of items in response body
-    callback(null, success(result.Items));
+    //callback(null, success(result.Items));
   } catch (e) {
+    callback(null, failure({ status: false }));
+  }
+
+  // get current enrolled courses
+  var enrolledCoursesParams = {
+    TableName: 'enrolment',
+    KeyConditionExpression: "userId = :userId",
+    ExpressionAttributeValues: {
+      ":userId": event.requestContext.identity.cognitoIdentityId
+    }
+  };
+
+  var enrolledCoursesResults = null;
+  try{
+    enrolledCoursesResults = await dynamoDbLib.call('query', enrolledCoursesParams);
+    result.Items["enrolled"] = enrolledCoursesResults;
+    callback(null, success(result.Items));
+  } catch(e){
     callback(null, failure({ status: false }));
   }
 }
