@@ -23,9 +23,16 @@ export async function main(event, context, callback) {
   var result = null
   try {
     result = await dynamoDbLib.call("query", params);
+    // return the results if it's empty
+    if(result.Items.length === 0){
+      callback(null, success(result.Items));
+      return;
+    }
     // Return the matching list of items in response body
     //callback(null, success(result.Items));
   } catch (e) {
+    console.log('failure to get enrolment');
+    console.log(e)
     callback(null, failure({ status: false }));
   }
   console.log('enrolment query:');
