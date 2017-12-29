@@ -13,6 +13,7 @@ export async function main(event, context, callback) {
       title: data.title,
       description: data.description,
       moduleType: data.moduleType,
+      order: parseInt(data.order, 10),
       createdAt: new Date().getTime()
     }
   };

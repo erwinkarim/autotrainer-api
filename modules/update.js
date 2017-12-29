@@ -15,12 +15,16 @@ export async function main(event, context, callback) {
     ConditionExpression: "userId = :userId",
     // 'UpdateExpression' defines the attributes to be updated
     // 'ExpressionAttributeValues' defines the value in the update expression
-    UpdateExpression: "SET title = :title, description = :description, body = :body",
+    UpdateExpression: "SET title = :title, description = :description, body = :body, #o = :order",
     ExpressionAttributeValues: {
       ":title": data.title ? data.title : null,
       ":description": data.description ? data.description : null,
       ":body": data.body ? data.body : null,
-      ":userId": event.requestContext.identity.cognitoIdentityId
+      ":userId": event.requestContext.identity.cognitoIdentityId,
+      ":order": parseInt(data.order,10)
+    },
+    ExpressionAttributeNames: {
+      '#o': 'order'
     },
     ReturnValues: "ALL_NEW"
   };

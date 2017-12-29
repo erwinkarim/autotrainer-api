@@ -1,11 +1,11 @@
 {
   "pathParameters": {
-    "id": "76ac1af0-de50-11e7-9514-658a5b7739d7"
+    "id": "a406f2d0-ec7f-11e7-a401-eb830ae12ce9"
   },
-  "queryParameters":{
+  "queryStringParameters":{
     "courseId": "course-test"
   },
-  "body": "{\"courseId\":\"course-test\", \"title\":\"New title for the course\", \"description\":\"base of the things to come\", \"module_type\":\"article\" , \"body\":\"A longer stuff about things inside the body of the modules\"}",
+  "body": "{\"courseId\":\"course-test\", \"title\":\"New title for the course\", \"description\":\"base of the things to come\", \"module_type\":\"article\" , \"body\":\"A longer stuff about things inside the body of the modules\", \"order\":\"5\"}",
   "requestContext": {
     "identity": {
       "cognitoIdentityId": "USER-SUB-1234"
