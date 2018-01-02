@@ -14,7 +14,8 @@ export async function main(event, context, callback) {
     ExpressionAttributeValues: {
       ":courseId": event.queryStringParameters.courseId
     },
-    ProjectionExpression: "courseId, moduleId, userId, moduleType, title, description, createdAt"
+    ExpressionAttributeNames: {'#o':'order'},
+    ProjectionExpression: "courseId, moduleId, userId, moduleType, title, description, createdAt, #o"
   };
 
   try {
