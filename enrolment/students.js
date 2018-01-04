@@ -3,6 +3,7 @@ import { success, failure } from "./libs/response-lib";
 
 /*
   show the users that is enrolled in a courseId
+  TODO: somehow contact cognito federated identity, and gleam user id from there
 */
 export async function main(event, context, callback) {
   const params = {
