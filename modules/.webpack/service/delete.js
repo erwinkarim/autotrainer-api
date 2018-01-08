@@ -60,161 +60,23 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.main = undefined;
-
-var _regenerator = __webpack_require__(1);
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = __webpack_require__(2);
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-/*
-  delete a module
-*/
-var main = exports.main = function () {
-  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, _result, countParams, result, moduleCount;
-
-    return _regenerator2.default.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            params = {
-              TableName: "modules",
-              Key: {
-                courseId: event.queryStringParameters.courseId,
-                moduleId: event.pathParameters.id
-              },
-              ConditionExpression: "userId = :userId",
-              ExpressionAttributeValues: {
-                ":userId": event.requestContext.identity.cognitoIdentityId
-              }
-            };
-            _context.prev = 1;
-            _context.next = 4;
-            return dynamoDbLib.call("delete", params);
-
-          case 4:
-            _result = _context.sent;
-            _context.next = 10;
-            break;
-
-          case 7:
-            _context.prev = 7;
-            _context.t0 = _context["catch"](1);
-
-            callback(null, (0, _responseLib.failure)({ status: false }));
-
-          case 10:
-
-            //attemp to update module count in course
-            countParams = {
-              TableName: "modules",
-              KeyConditionExpression: 'courseId = :courseId',
-              ExpressionAttributeValues: {
-                ':courseId': event.queryStringParameters.courseId
-              },
-              ProjectionExpression: "courseId, moduleId",
-              select: 'COUNT'
-            };
-            _context.prev = 11;
-
-            console.log('attemp to get module count');
-            _context.next = 15;
-            return dynamoDbLib.call('query', countParams);
-
-          case 15:
-            result = _context.sent;
-            moduleCount = result.Count;
-
-
-            countParams = {
-              TableName: "courses",
-              Key: {
-                courseId: event.queryStringParameters.courseId
-              },
-              UpdateExpression: "SET moduleCount = :moduleCount",
-              ConditionExpression: "userId = :userId",
-              ExpressionAttributeValues: {
-                ":moduleCount": moduleCount,
-                ":userId": event.requestContext.identity.cognitoIdentityId
-              },
-              ReturnValues: "ALL_NEW"
-
-              //update course count
-            };console.log("attemp to update course count with value " + moduleCount);
-            _context.next = 21;
-            return dynamoDbLib.call('update', countParams);
-
-          case 21:
-            result = _context.sent;
-
-            // now, call back
-            callback(null, (0, _responseLib.success)({ status: true }));
-
-            _context.next = 30;
-            break;
-
-          case 25:
-            _context.prev = 25;
-            _context.t1 = _context["catch"](11);
-
-            console.log('error getting module count');
-            console.log(_context.t1);
-            callback(null, (0, _responseLib.failure)({ status: false }));
-
-          case 30:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee, this, [[1, 7], [11, 25]]);
-  }));
-
-  return function main(_x, _x2, _x3) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-var _dynamodbLib = __webpack_require__(3);
-
-var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
-
-var _responseLib = __webpack_require__(5);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/regenerator");
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/helpers/asyncToGenerator");
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -238,6 +100,108 @@ function call(action, params) {
 
   return dynamoDb[action](params).promise();
 }
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.main = undefined;
+
+var _regenerator = __webpack_require__(0);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(1);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+/*
+  delete a module
+*/
+var main = exports.main = function () {
+  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
+    var params, result;
+    return _regenerator2.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            params = {
+              TableName: "modules",
+              Key: {
+                courseId: event.queryStringParameters.courseId,
+                moduleId: event.pathParameters.id
+              },
+              ConditionExpression: "userId = :userId",
+              ExpressionAttributeValues: {
+                ":userId": event.requestContext.identity.cognitoIdentityId
+              }
+            };
+            _context.prev = 1;
+            _context.next = 4;
+            return dynamoDbLib.call("delete", params);
+
+          case 4:
+            result = _context.sent;
+            _context.next = 10;
+            break;
+
+          case 7:
+            _context.prev = 7;
+            _context.t0 = _context["catch"](1);
+
+            callback(null, (0, _responseLib.failure)({ status: false }));
+
+          case 10:
+            _context.prev = 10;
+            _context.next = 13;
+            return (0, _update_module_counts2.default)(event.queryStringParameters.courseId, event.requestContext.identity.cognitoIdentityId);
+
+          case 13:
+
+            // everything ok, call back
+            callback(null, (0, _responseLib.success)({ status: true }));
+
+            _context.next = 19;
+            break;
+
+          case 16:
+            _context.prev = 16;
+            _context.t1 = _context["catch"](10);
+
+            callback(null, (0, _responseLib.failure)({ status: false }));
+
+          case 19:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, this, [[1, 7], [10, 16]]);
+  }));
+
+  return function main(_x, _x2, _x3) {
+    return _ref.apply(this, arguments);
+  };
+}();
+
+var _dynamodbLib = __webpack_require__(2);
+
+var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
+
+var _responseLib = __webpack_require__(5);
+
+var _update_module_counts = __webpack_require__(7);
+
+var _update_module_counts2 = _interopRequireDefault(_update_module_counts);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
 /* 4 */
@@ -289,6 +253,106 @@ function buildResponse(statusCode, body) {
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _regenerator = __webpack_require__(0);
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = __webpack_require__(1);
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _dynamodbLib = __webpack_require__(2);
+
+var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/*
+  function to update course count based on courseId
+*/
+exports.default = function () {
+  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(courseId, userId) {
+    var countParams, result, moduleCount;
+    return _regenerator2.default.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            countParams = {
+              TableName: "modules",
+              KeyConditionExpression: 'courseId = :courseId',
+              ExpressionAttributeValues: {
+                ':courseId': courseId
+              },
+              ProjectionExpression: "courseId, moduleId",
+              select: 'COUNT'
+            };
+            _context.prev = 1;
+            _context.next = 4;
+            return dynamoDbLib.call('query', countParams);
+
+          case 4:
+            result = _context.sent;
+            moduleCount = result.Count;
+
+
+            countParams = {
+              TableName: "courses",
+              Key: {
+                courseId: courseId
+              },
+              UpdateExpression: "SET moduleCount = :moduleCount",
+              ConditionExpression: "userId = :userId",
+              ExpressionAttributeValues: {
+                ":moduleCount": moduleCount,
+                ":userId": userId
+              },
+              ReturnValues: "ALL_NEW"
+
+              //update course count
+              //console.log(`attemp to update course count with value ${moduleCount}`);
+            };_context.next = 9;
+            return dynamoDbLib.call('update', countParams);
+
+          case 9:
+            result = _context.sent;
+            return _context.abrupt("return", 0);
+
+          case 13:
+            _context.prev = 13;
+            _context.t0 = _context["catch"](1);
+
+            console.log('error getting module count');
+            console.log(_context.t0);
+            callback(null, failure({ status: false }));
+
+          case 18:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee, this, [[1, 13]]);
+  }));
+
+  function update_module_counts(_x, _x2) {
+    return _ref.apply(this, arguments);
+  }
+
+  return update_module_counts;
+}();
 
 /***/ })
 /******/ ])));
