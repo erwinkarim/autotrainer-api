@@ -24,6 +24,9 @@ export async function main(event, context, callback) {
   try {
     const result = await dynamoDbLib.call("query", params);
     // Return the matching list of items in response body
+    if(results.Items.length > 0){
+      //should get further user info, like name, email, etc
+    }
     callback(null, success(result.Items));
   } catch (e) {
     console.log(e);

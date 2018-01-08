@@ -1,5 +1,5 @@
 {
-  "body": "{\"courseId\":\"course-test\", \"order\":\"4\",  \"title\":\"Test title for the course\", \"description\":\"Lorem ipsum el savetour et. base of the things to come\"}",
+  "body": "{\"courseId\":\"2c51a490-dd36-11e7-9b9b-57c32abddbf2\", \"order\":\"3\",  \"title\":\"Test title for the course\", \"moduleType\":\"article\",  \"description\":\"Lorem ipsum el savetour et. base of the things to come\", \"body\":\"this is the body\"}",
   "requestContext": {
     "identity": {
       "cognitoIdentityId": "USER-SUB-1234"

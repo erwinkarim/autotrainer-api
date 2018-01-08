@@ -56,6 +56,7 @@ export async function main(event, context, callback) {
     ReturnValues: "ALL_NEW"
   };
 
+
   try {
     console.log('update new enrolment item');
     const result = await dynamoDbLib.call("update", params);
@@ -65,4 +66,6 @@ export async function main(event, context, callback) {
     console.log(e)
     callback(null, failure({ status: false }));
   }
+
+  //if all the modules in the course has been attended, issue attandance cert.
 }

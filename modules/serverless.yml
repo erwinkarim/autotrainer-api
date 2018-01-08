@@ -26,6 +26,11 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        # for trigger
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:ListStreams
       Resource: "arn:aws:dynamodb:ap-southeast-1:*:*"
 
 functions:
@@ -85,5 +90,24 @@ functions:
       - http:
           path: modules/{id}
           method: delete
+          cors: true
+          authorizer: aws_iam
+  test:
+    # Defines an HTTP API endpoint that calls the main function in delete.js
+    # - path: url path is /notes/{id}
+    # - method: DELETE request
+    handler: test.main
+    events:
+      - http:
+          path: modules/test
+          method: get
+          cors: true
+          authorizer: aws_iam
+  update_module_count:
+    handler: update_module_count.main
+    events:
+      - http:
+          path: modules/update_module_count
+          method: get
           cors: true
           authorizer: aws_iam

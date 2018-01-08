@@ -1,12 +1,12 @@
 import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
 
+/*
+  get the specific module moduleId of courseId
+*/
 export async function main(event, context, callback) {
   const params = {
     TableName: "modules",
-    // 'Key' defines the partition key and sort key of the item to be retrieved
-    // - 'userId': Identity Pool identity id of the authenticated user
-    // - 'noteId': path parameter
     Key: {
       courseId: event.queryStringParameters.courseId,
       moduleId: event.pathParameters.id
@@ -20,7 +20,7 @@ export async function main(event, context, callback) {
       courseId: event.queryStringParameters.courseId
     },
     ExpressionAttributeNames: { '#n':'name' },
-    ProjectionExpression: "courseId, #n"
+    ProjectionExpression: "courseId, #n, moduleCount"
   };
 
   try {

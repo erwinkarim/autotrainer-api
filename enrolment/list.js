@@ -4,8 +4,10 @@ import { success, failure } from "./libs/response-lib";
 /*
   list all courses attended by a particular user
   TODO: get enrolled courses info (title, etc
+  TODO: get total modules for each course
 */
 export async function main(event, context, callback) {
+  //get courses that is enrolled
   const params = {
     TableName: "enrolment",
     // 'KeyConditionExpression' defines the condition for the query
@@ -35,25 +37,27 @@ export async function main(event, context, callback) {
     console.log(e)
     callback(null, failure({ status: false }));
   }
-  console.log('enrolment query:');
-  console.log(result.Items);
 
+  // get list of courseIds based on enrolment
   var courseIds = result.Items.map( (e,i) => { return { courseId:e.courseId}; });
 
-  //load course title
+  //get course title, based on enrolment
   const courseTitleParams = {
     RequestItems: {
       "courses" : {
         Keys: courseIds,
         ExpressionAttributeNames: {"#name": "name"},
-        ProjectionExpression: "courseId, #name",
+        ProjectionExpression: "courseId, #name, moduleCount",
       }
     }
   };
+
   var result2 = null;
 
   try {
     result2 = await dynamoDbLib.call('batchGet', courseTitleParams);
+    console.log('result2', result2.Responses.courses);
+    // TODO: issues if the course got deleted
     result.Items.map( (c, i) => {
       c["name"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).name
     });

@@ -1,9 +1,9 @@
 {
   "pathParameters": {
-    "id": "76ac1af0-de50-11e7-9514-658a5b7739d7"
+    "id": "3e2783b0-f41f-11e7-9657-35e89857b66a"
   },
-  "queryParameters":{
-    "courseId": "course-test"
+  "queryStringParameters":{
+    "courseId": "2c51a490-dd36-11e7-9b9b-57c32abddbf2"
   },
   "requestContext": {
     "identity": {
