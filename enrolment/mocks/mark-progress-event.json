@@ -1,0 +1,13 @@
+{
+  "pathParameters": {
+    "id": "786e34c0-de39-11e7-918c-73a3bea17614", "moduleId":"19312850-eb81-11e7-aff1-756d229f2aea"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  },
+  "body": {
+    "proposed answer": [1, 2, 3, "test whatever", "anothoer one of the answer"]
+  }
+}

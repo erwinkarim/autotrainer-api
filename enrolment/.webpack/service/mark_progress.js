@@ -79,53 +79,50 @@ var _regenerator = __webpack_require__(1);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(2);
+var _keys = __webpack_require__(2);
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _asyncToGenerator2 = __webpack_require__(3);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 /*
-  list all courses attended by a particular user
-  TODO: get enrolled courses info (title, etc
-  TODO: get total modules for each course
+  function to mark a modules progress
+  (ie, what questions that has been answered, how far in the video ,etc)
 */
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, result, courseIds, courseTitleParams, result2;
+    var attendance, result, enrolment_status, moduleId, current_progress, obj, updatedProgress, _result;
+
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            //get courses that is enrolled
-            params = {
+            // get current enrolment status w/ progress
+            attendance = {
               TableName: "enrolment",
-              // 'KeyConditionExpression' defines the condition for the query
-              // - 'userId = :userId': only return items with matching 'userId'
-              //   partition key
-              // 'ExpressionAttributeValues' defines the value in the condition
-              // - ':userId': defines 'userId' to be Identity Pool identity id
-              //   of the authenticated user
-              KeyConditionExpression: "userId = :userId",
-              ExpressionAttributeValues: {
-                ":userId": event.requestContext.identity.cognitoIdentityId
+              Key: {
+                userId: event.requestContext.identity.cognitoIdentityId,
+                courseId: event.pathParameters.id
               }
             };
             result = null;
             _context.prev = 2;
-            _context.next = 5;
-            return dynamoDbLib.call("query", params);
 
-          case 5:
+            console.log('attempt getting current enrolment');
+            _context.next = 6;
+            return dynamoDbLib.call("get", attendance);
+
+          case 6:
             result = _context.sent;
 
-            if (!(result.Items.length === 0)) {
-              _context.next = 9;
-              break;
-            }
 
-            callback(null, (0, _responseLib.success)(result.Items));
-            return _context.abrupt("return");
+            //return error if enrolment record is not found
+            if (!result.Item) {
+              callback(null, (0, _responseLib.failure)({ status: false, error: "Enrolment record not found." }));
+            };
 
-          case 9:
             _context.next = 16;
             break;
 
@@ -133,63 +130,81 @@ var main = exports.main = function () {
             _context.prev = 11;
             _context.t0 = _context["catch"](2);
 
-            console.log('failure to get enrolment');
+            console.log('error getting enrolment');
             console.log(_context.t0);
             callback(null, (0, _responseLib.failure)({ status: false }));
 
           case 16:
+            enrolment_status = result.Item;
+            moduleId = event.pathParameters.moduleId;
 
-            // get list of courseIds based on enrolment
-            courseIds = result.Items.map(function (e, i) {
-              return { courseId: e.courseId };
-            });
 
-            //get course title, based on enrolment
+            if (enrolment_status.progress_detail) {
 
-            courseTitleParams = {
-              RequestItems: {
-                "courses": {
-                  Keys: courseIds,
-                  ExpressionAttributeNames: { "#name": "name" },
-                  ProjectionExpression: "courseId, #name, moduleCount"
-                }
+              // find the current progress
+              current_progress = enrolment_status.progress_detail.find(function (e) {
+                return (0, _keys2.default)(e)[0] === event.pathParameters.moduleId;
+              });
+
+              // update or push a new one
+
+              if (current_progress !== undefined) {
+                current_progress[moduleId] = event.body;
+              } else {
+                obj = {};
+
+                obj[moduleId] = event.body;
+                enrolment_status.progress_detail.push(obj);
               }
+            } else {
+              // create a new progress if there's nothing in it
+              obj = {};
+
+              obj[moduleId] = event.body;
+              enrolment_status.progress_detail = [obj];
+            }
+
+            //upload to dynamodb
+            updatedProgress = {
+              TableName: 'enrolment',
+              Key: {
+                userId: event.requestContext.identity.cognitoIdentityId,
+                courseId: event.pathParameters.id
+              },
+              UpdateExpression: "SET progress_detail = :progress_detail",
+              ExpressionAttributeValues: {
+                ":progress_detail": enrolment_status.progress_detail
+              },
+              ReturnValues: "ALL_NEW"
             };
-            result2 = null;
-            _context.prev = 19;
-            _context.next = 22;
-            return dynamoDbLib.call('batchGet', courseTitleParams);
+            _context.prev = 20;
 
-          case 22:
-            result2 = _context.sent;
+            console.log('attemp to update enrolment progress');
+            _context.next = 24;
+            return dynamoDbLib.call('update', updatedProgress);
 
-            console.log('result2', result2.Responses.courses);
-            // TODO: issues if the course got deleted
-            result.Items.map(function (c, i) {
-              c["name"] = result2.Responses.courses.find(function (e) {
-                return e.courseId === c.courseId;
-              }).name;
-              c["moduleCount"] = result2.Responses.courses.find(function (e) {
-                return e.courseId === c.courseId;
-              }).moduleCount;
-            });
-            callback(null, (0, _responseLib.success)(result.Items));
-            _context.next = 32;
+          case 24:
+            _result = _context.sent;
+
+            callback(null, (0, _responseLib.success)(_result.Item));
+
+            _context.next = 33;
             break;
 
           case 28:
             _context.prev = 28;
-            _context.t1 = _context["catch"](19);
+            _context.t1 = _context["catch"](20);
 
+            console.log('error updating current progress');
             console.log(_context.t1);
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 32:
+          case 33:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 11], [19, 28]]);
+    }, _callee, this, [[2, 11], [20, 28]]);
   }));
 
   return function main(_x, _x2, _x3) {
@@ -197,15 +212,17 @@ var main = exports.main = function () {
   };
 }();
 
-var _dynamodbLib = __webpack_require__(3);
+var _dynamodbLib = __webpack_require__(4);
 
 var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
 
-var _responseLib = __webpack_require__(5);
+var _responseLib = __webpack_require__(6);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+;
 
 /***/ }),
 /* 1 */
@@ -217,10 +234,16 @@ module.exports = require("babel-runtime/regenerator");
 /* 2 */
 /***/ (function(module, exports) {
 
-module.exports = require("babel-runtime/helpers/asyncToGenerator");
+module.exports = require("babel-runtime/core-js/object/keys");
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports) {
+
+module.exports = require("babel-runtime/helpers/asyncToGenerator");
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -231,7 +254,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.call = call;
 
-var _awsSdk = __webpack_require__(4);
+var _awsSdk = __webpack_require__(5);
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
 
@@ -246,13 +269,13 @@ function call(action, params) {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = require("aws-sdk");
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -262,7 +285,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(6);
+var _stringify = __webpack_require__(7);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -291,7 +314,7 @@ function buildResponse(statusCode, body) {
 }
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");
