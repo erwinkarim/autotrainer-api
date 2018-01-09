@@ -59,7 +59,8 @@ export async function main(event, context, callback) {
     console.log('result2', result2.Responses.courses);
     // TODO: issues if the course got deleted
     result.Items.map( (c, i) => {
-      c["name"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).name
+      c["name"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).name;
+      c["moduleCount"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).moduleCount;
     });
     callback(null, success(result.Items));
   } catch (e){
