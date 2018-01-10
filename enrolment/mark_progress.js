@@ -17,7 +17,7 @@ export async function main(event, context, callback) {
 
   var result = null;
   try {
-    console.log('attempt getting current enrolment');
+    //console.log('attempt getting current enrolment');
     result = await dynamoDbLib.call("get", attendance);
 
     //return error if enrolment record is not found
@@ -34,6 +34,7 @@ export async function main(event, context, callback) {
   var enrolment_status = result.Item;
   var moduleId = event.pathParameters.moduleId;
 
+  //console.log('event.body', event.body);
 
   if(enrolment_status.progress_detail){
 
@@ -72,9 +73,9 @@ export async function main(event, context, callback) {
   };
 
   try {
-    console.log('attemp to update enrolment progress');
+    //console.log('attemp to update enrolment progress');
     const result = await dynamoDbLib.call('update', updatedProgress);
-    callback(null, success(result.Item) );
+    callback(null, success(result.Attributes) );
 
   } catch(e){
     console.log('error updating current progress');

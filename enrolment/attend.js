@@ -6,7 +6,8 @@ import { success, failure } from "./libs/response-lib";
 */
 export async function main(event, context, callback) {
   // 1. get the appropiate enrolment entry
-  // 2. update the entry to append teh progress field if necessary
+  // 2. update the entry to append the progress field if necessary
+  // 3. issue cert if all classes has been enrolled
   var params = {
     TableName: "enrolment",
     Key: {

@@ -109,12 +109,10 @@ var main = exports.main = function () {
             };
             result = null;
             _context.prev = 2;
-
-            console.log('attempt getting current enrolment');
-            _context.next = 6;
+            _context.next = 5;
             return dynamoDbLib.call("get", attendance);
 
-          case 6:
+          case 5:
             result = _context.sent;
 
 
@@ -123,21 +121,22 @@ var main = exports.main = function () {
               callback(null, (0, _responseLib.failure)({ status: false, error: "Enrolment record not found." }));
             };
 
-            _context.next = 16;
+            _context.next = 15;
             break;
 
-          case 11:
-            _context.prev = 11;
+          case 10:
+            _context.prev = 10;
             _context.t0 = _context["catch"](2);
 
             console.log('error getting enrolment');
             console.log(_context.t0);
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 16:
+          case 15:
             enrolment_status = result.Item;
             moduleId = event.pathParameters.moduleId;
 
+            //console.log('event.body', event.body);
 
             if (enrolment_status.progress_detail) {
 
@@ -177,34 +176,32 @@ var main = exports.main = function () {
               },
               ReturnValues: "ALL_NEW"
             };
-            _context.prev = 20;
-
-            console.log('attemp to update enrolment progress');
-            _context.next = 24;
+            _context.prev = 19;
+            _context.next = 22;
             return dynamoDbLib.call('update', updatedProgress);
 
-          case 24:
+          case 22:
             _result = _context.sent;
 
-            callback(null, (0, _responseLib.success)(_result.Item));
+            callback(null, (0, _responseLib.success)(_result.Attributes));
 
-            _context.next = 33;
+            _context.next = 31;
             break;
 
-          case 28:
-            _context.prev = 28;
-            _context.t1 = _context["catch"](20);
+          case 26:
+            _context.prev = 26;
+            _context.t1 = _context["catch"](19);
 
             console.log('error updating current progress');
             console.log(_context.t1);
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 33:
+          case 31:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 11], [20, 28]]);
+    }, _callee, this, [[2, 10], [19, 26]]);
   }));
 
   return function main(_x, _x2, _x3) {
