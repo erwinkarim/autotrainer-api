@@ -24,7 +24,8 @@ export async function main(event, context, callback) {
   try {
     const result = await dynamoDbLib.call("query", params);
     // Return the matching list of items in response body
-    if(results.Items.length > 0){
+    if(result.Items.length > 0){
+      console.log('asking cognto identity pool for more info');
       //should get further user info, like name, email, etc
     }
     callback(null, success(result.Items));
