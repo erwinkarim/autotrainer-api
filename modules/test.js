@@ -2,30 +2,80 @@
 import uuid from "uuid";
 import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
+import AWS from 'aws-sdk';
 
 /*
   test function to go test queries
 */
 export async function main(event, context, callback) {
-  console.log('test');
+  //attemp to get cognito attributes from given identityId
+  const identityId = 'ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129';
+  const identityPoolId = 'ap-southeast-1:d305ce7d-b107-480b-93cd-a4c0c9881a42';
+  const userPoolId = 'ap-southeast-1_SDZuB7De0';
+  const clientId = '1pdpd2tbujfndf8fbb4udmh301';
+  const userName = 'Google_113291405746651466763';
+  const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
+  //const identSrv = new AWS.CognitoIdentity({region:'ap-southeast-1'});
+
   const params = {
-    TableName: "modules",
-    // 'Key' defines the partition key and sort key of the item to be retrieved
-    // - 'noteId': path parameter
-    KeyConditionExpression: 'courseId = :courseId',
-    ExpressionAttributeValues: {
-      ':courseId': '786e34c0-de39-11e7-918c-73a3bea17614'
+    AuthFlow: 'CUSTOM_AUTH'
+    UserPoolId: userPoolId,
+    ClientId: clientId,
+    AuthParameters: {
+      'CUSTOM_AUTH': 'USERNAME'
     },
-    ProjectionExpression: "courseId, moduleId",
-    select: 'COUNT'
+    ContextData: {
+      HttpHeaders: [
+        {
+          headerName: 'STRING_VALUE',
+          headerValue: 'STRING_VALUE'
+        },
+      ],
+      IpAddress: '127.0.0.1', /* required */
+      ServerName: '', /* required */
+      ServerPath: 'STRING_VALUE', /* required */
+    }
   };
 
-  try {
-    const result = await dynamoDbLib.call("query", params);
-    console.log('result', result);
-    callback(null, success(result.Item));
-  } catch(e){
-    console.log(e);
-    callback(null, failure({ status: false }));
-  }
+  identSrv.getId(params, (err, data) => {
+    if(err){
+      console.log('error getting id');
+      console.log(err);
+    } else {
+      console.log('data', data);
+    }
+  })
+
+  /*
+  // grabs user data from cognito username
+  // identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
+  identSrv.adminGetUser(params, (err, data) => {
+    if(err){
+      console.log('error getting data');
+      console.log(err);
+    } else {
+      console.log('data', data);
+    }
+
+  })
+  */
+
+  /*
+  const params = {
+    IdentityId: identityId
+  };
+
+  //const identSrv = new AWS.CognitoIdentity({region:'ap-southeast-1'});
+  identSrv.describeIdentity(params, (err, data) => {
+    if(err){
+      console.log('error getting id');
+      console.log(err);
+    } else {
+      console.log('data', data);
+    }
+  })
+  { IdentityId: 'ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129', Logins: [ 'accounts.google.com' ],
+  CreationDate: 2017-11-23T00:29:29.915Z, LastModifiedDate: 2017-11-23T00:29:29.935Z }
+  */
+
 }

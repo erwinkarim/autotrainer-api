@@ -7,18 +7,13 @@ import { success, failure } from "./libs/response-lib";
 export async function main(event, context, callback) {
   var params = {
     TableName: "courses",
-    // 'KeyConditionExpression' defines the condition for the query
-    // - 'userId = :userId': only return items with matching 'userId'
-    //   partition key
-    // 'ExpressionAttributeValues' defines the value in the condition
-    // - ':userId': defines 'userId' to be Identity Pool identity id
-    //   of the authenticated user
-    /*
-    FilterExpression: "userId = :userId",
+    FilterExpression: "#s =  :s",
     ExpressionAttributeValues: {
-      ":userId": event.requestContext.identity.cognitoIdentityId
-    }
-    */
+      ":s": 'published'
+    },
+    ExpressionAttributeNames: {
+      '#s': 'status'
+    },
     Limit: 20
   };
   var result = null;
@@ -28,7 +23,10 @@ export async function main(event, context, callback) {
     // Return the matching list of items in response body
     //callback(null, success(result.Items));
   } catch (e) {
+    console.log('error scanning courses');
+    console.log(e);
     callback(null, failure({ status: false }));
+    return;
   }
 
   // get current enrolled courses

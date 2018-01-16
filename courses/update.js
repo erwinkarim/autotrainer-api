@@ -23,7 +23,7 @@ export async function main(event, context, callback) {
       ":name" : data.name ? data.name : null,
       ":tagline" : data.tagline ? data.tagline : null,
       ":description" : data.description ? data.description : null,
-      ":status" : data.status ? data.status : null,
+      ":status" : data.status ? data.status : 'unpublished',
       ":picture": data.picture ? data.picture : null,
       ":price" : data.price ? data.price : null,
       ":key_points": data.key_points ? data.key_points : null,

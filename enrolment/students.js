@@ -1,5 +1,6 @@
 import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
+import AWS from 'aws-sdk';
 
 /*
   show the users that is enrolled in a courseId
@@ -27,7 +28,9 @@ export async function main(event, context, callback) {
     if(result.Items.length > 0){
       console.log('asking cognto identity pool for more info');
       //should get further user info, like name, email, etc
-    }
+
+      const ident = new AWS.CognitoIdentity({region:'ap-southeast-1'});
+    };
     callback(null, success(result.Items));
   } catch (e) {
     console.log(e);

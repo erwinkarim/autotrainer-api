@@ -83,62 +83,81 @@ var _asyncToGenerator2 = __webpack_require__(2);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
+/*
+  get recent courses
+*/
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var data, params;
+    var params, result, enrolledCoursesParams, enrolledCoursesResults;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            // Request body is passed in as a JSON encoded string in 'event.body'
-            data = JSON.parse(event.body);
             params = {
               TableName: "courses",
-              // 'Item' contains the attributes of the item to be created
-              // - 'userId': user identities are federated through the
-              //             Cognito Identity Pool, we will use the identity id
-              //             as the user id of the authenticated user
-              // - 'noteId': a unique uuid
-              // - 'content': parsed from request body
-              // - 'attachment': parsed from request body
-              // - 'createdAt': current Unix timestamp
-              Item: {
-                courseId: _uuid2.default.v1(),
-                userId: event.requestContext.identity.cognitoIdentityId,
-                name: data.name,
-                description: data.description,
-                status: 'unpublished',
-                //these two will be added at patch stage
-                //picture: '',
-                price: 39.99,
-                createdAt: new Date().getTime()
-              }
+              FilterExpression: "#s =  :s",
+              ExpressionAttributeValues: {
+                ":s": 'published'
+              },
+              ExpressionAttributeNames: {
+                '#s': 'status'
+              },
+              Limit: 20
             };
+            result = null;
             _context.prev = 2;
             _context.next = 5;
-            return dynamoDbLib.call("put", params);
+            return dynamoDbLib.call("scan", params);
 
           case 5:
-            callback(null, (0, _responseLib.success)(params.Item));
-            _context.next = 12;
+            result = _context.sent;
+            _context.next = 14;
             break;
 
           case 8:
             _context.prev = 8;
             _context.t0 = _context["catch"](2);
 
+            console.log('error scanning courses');
             console.log(_context.t0);
             callback(null, (0, _responseLib.failure)({ status: false }));
+            return _context.abrupt("return");
 
-          case 12:
-            ;
+          case 14:
 
-          case 13:
+            // get current enrolled courses
+            enrolledCoursesParams = {
+              TableName: 'enrolment',
+              KeyConditionExpression: "userId = :userId",
+              ExpressionAttributeValues: {
+                ":userId": event.requestContext.identity.cognitoIdentityId
+              }
+            };
+            enrolledCoursesResults = null;
+            _context.prev = 16;
+            _context.next = 19;
+            return dynamoDbLib.call('query', enrolledCoursesParams);
+
+          case 19:
+            enrolledCoursesResults = _context.sent;
+
+            result.Items["enrolled"] = enrolledCoursesResults;
+            callback(null, (0, _responseLib.success)(result.Items));
+            _context.next = 27;
+            break;
+
+          case 24:
+            _context.prev = 24;
+            _context.t1 = _context["catch"](16);
+
+            callback(null, (0, _responseLib.failure)({ status: false }));
+
+          case 27:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 8]]);
+    }, _callee, this, [[2, 8], [16, 24]]);
   }));
 
   return function main(_x, _x2, _x3) {
@@ -146,15 +165,11 @@ var main = exports.main = function () {
   };
 }();
 
-var _uuid = __webpack_require__(3);
-
-var _uuid2 = _interopRequireDefault(_uuid);
-
-var _dynamodbLib = __webpack_require__(4);
+var _dynamodbLib = __webpack_require__(3);
 
 var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
 
-var _responseLib = __webpack_require__(6);
+var _responseLib = __webpack_require__(5);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -174,12 +189,6 @@ module.exports = require("babel-runtime/helpers/asyncToGenerator");
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
-
-module.exports = require("uuid");
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -190,7 +199,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.call = call;
 
-var _awsSdk = __webpack_require__(5);
+var _awsSdk = __webpack_require__(4);
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
 
@@ -205,13 +214,13 @@ function call(action, params) {
 }
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports) {
 
 module.exports = require("aws-sdk");
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -221,7 +230,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(7);
+var _stringify = __webpack_require__(6);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -250,7 +259,7 @@ function buildResponse(statusCode, body) {
 }
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");

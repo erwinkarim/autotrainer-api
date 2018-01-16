@@ -8,20 +8,13 @@ export async function main(event, context, callback) {
 
   const params = {
     TableName: "courses",
-    // 'Item' contains the attributes of the item to be created
-    // - 'userId': user identities are federated through the
-    //             Cognito Identity Pool, we will use the identity id
-    //             as the user id of the authenticated user
-    // - 'noteId': a unique uuid
-    // - 'content': parsed from request body
-    // - 'attachment': parsed from request body
-    // - 'createdAt': current Unix timestamp
     Item: {
       courseId: uuid.v1(),
       userId: event.requestContext.identity.cognitoIdentityId,
       name: data.name,
       description: data.description,
       status: 'unpublished',
+      moduleCount: 0,
       //these two will be added at patch stage
       //picture: '',
       price: 39.99,
