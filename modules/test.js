@@ -16,36 +16,13 @@ export async function main(event, context, callback) {
   const userName = 'Google_113291405746651466763';
   const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
   //const identSrv = new AWS.CognitoIdentity({region:'ap-southeast-1'});
+  console.log('context dump');
+  console.log(context);
 
-  const params = {
-    AuthFlow: 'CUSTOM_AUTH'
-    UserPoolId: userPoolId,
-    ClientId: clientId,
-    AuthParameters: {
-      'CUSTOM_AUTH': 'USERNAME'
-    },
-    ContextData: {
-      HttpHeaders: [
-        {
-          headerName: 'STRING_VALUE',
-          headerValue: 'STRING_VALUE'
-        },
-      ],
-      IpAddress: '127.0.0.1', /* required */
-      ServerName: '', /* required */
-      ServerPath: 'STRING_VALUE', /* required */
-    }
-  };
+  console.log('event.requestContext.identity dump:');
+  console.log(event.requestContext.identity);
 
-  identSrv.getId(params, (err, data) => {
-    if(err){
-      console.log('error getting id');
-      console.log(err);
-    } else {
-      console.log('data', data);
-    }
-  })
-
+  callback(null, success({ status:true }));
   /*
   // grabs user data from cognito username
   // identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});

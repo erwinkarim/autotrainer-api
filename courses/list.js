@@ -5,6 +5,15 @@ import { success, failure } from "./libs/response-lib";
   get recent courses
 */
 export async function main(event, context, callback) {
+  //process keys is applicable
+  if(event.queryStringParameters){
+    if(event.queryStringParameters.show_mode){
+      console.log('should process show_mode');
+      //check if this user allowed to view everything
+      return;
+    }
+  }
+
   var params = {
     TableName: "courses",
     FilterExpression: "#s =  :s",

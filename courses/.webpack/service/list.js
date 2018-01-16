@@ -93,6 +93,13 @@ var main = exports.main = function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            //process keys is applicable
+            if (event.queryStringParameters) {
+              if (event.queryStringParameters.show_mode) {
+                console.log('should process show_mode');
+              }
+            }
+
             params = {
               TableName: "courses",
               FilterExpression: "#s =  :s",
@@ -105,25 +112,25 @@ var main = exports.main = function () {
               Limit: 20
             };
             result = null;
-            _context.prev = 2;
-            _context.next = 5;
+            _context.prev = 3;
+            _context.next = 6;
             return dynamoDbLib.call("scan", params);
 
-          case 5:
+          case 6:
             result = _context.sent;
-            _context.next = 14;
+            _context.next = 15;
             break;
 
-          case 8:
-            _context.prev = 8;
-            _context.t0 = _context["catch"](2);
+          case 9:
+            _context.prev = 9;
+            _context.t0 = _context["catch"](3);
 
             console.log('error scanning courses');
             console.log(_context.t0);
             callback(null, (0, _responseLib.failure)({ status: false }));
             return _context.abrupt("return");
 
-          case 14:
+          case 15:
 
             // get current enrolled courses
             enrolledCoursesParams = {
@@ -134,30 +141,30 @@ var main = exports.main = function () {
               }
             };
             enrolledCoursesResults = null;
-            _context.prev = 16;
-            _context.next = 19;
+            _context.prev = 17;
+            _context.next = 20;
             return dynamoDbLib.call('query', enrolledCoursesParams);
 
-          case 19:
+          case 20:
             enrolledCoursesResults = _context.sent;
 
             result.Items["enrolled"] = enrolledCoursesResults;
             callback(null, (0, _responseLib.success)(result.Items));
-            _context.next = 27;
+            _context.next = 28;
             break;
 
-          case 24:
-            _context.prev = 24;
-            _context.t1 = _context["catch"](16);
+          case 25:
+            _context.prev = 25;
+            _context.t1 = _context["catch"](17);
 
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 27:
+          case 28:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[2, 8], [16, 24]]);
+    }, _callee, this, [[3, 9], [17, 25]]);
   }));
 
   return function main(_x, _x2, _x3) {

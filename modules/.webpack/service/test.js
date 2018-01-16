@@ -94,7 +94,7 @@ var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 */
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var identityId, identityPoolId, userPoolId, userName, identSrv, params;
+    var identityId, identityPoolId, userPoolId, clientId, userName, identSrv;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
@@ -103,27 +103,18 @@ var main = exports.main = function () {
             identityId = 'ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129';
             identityPoolId = 'ap-southeast-1:d305ce7d-b107-480b-93cd-a4c0c9881a42';
             userPoolId = 'ap-southeast-1_SDZuB7De0';
+            clientId = '1pdpd2tbujfndf8fbb4udmh301';
             userName = 'Google_113291405746651466763';
-            //const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
+            identSrv = new _awsSdk2.default.CognitoIdentityServiceProvider({ region: 'ap-southeast-1' });
+            //const identSrv = new AWS.CognitoIdentity({region:'ap-southeast-1'});
 
-            identSrv = new _awsSdk2.default.CognitoIdentity({ region: 'ap-southeast-1' });
-            params = {
-              IdentityPoolId: identityPoolId,
-              AccountId: '167457616767',
-              Logins: {
-                'account.google.com': '945370c4-985b-470a-8a56-562a257d6129'
-              }
-            };
+            console.log('context dump');
+            console.log(context);
 
-            identSrv.getId(params, function (err, data) {
-              if (err) {
-                console.log('error getting id');
-                console.log(err);
-              } else {
-                console.log('data', data);
-              }
-            });
+            console.log('event.requestContext.identity dump:');
+            console.log(event.requestContext.identity);
 
+            callback(null, (0, _responseLib.success)({ status: true }));
             /*
             // grabs user data from cognito username
             // identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
@@ -154,7 +145,7 @@ var main = exports.main = function () {
             CreationDate: 2017-11-23T00:29:29.915Z, LastModifiedDate: 2017-11-23T00:29:29.935Z }
             */
 
-          case 7:
+          case 11:
           case "end":
             return _context.stop();
         }
