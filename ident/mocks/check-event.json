@@ -1,6 +1,6 @@
 {
-  "queryStringParameters":{
-    "show_mode": "published"
+  "queryStringParameters": {
+    "username": "USERID-SUB-1234"
   },
   "requestContext": {
     "identity": {

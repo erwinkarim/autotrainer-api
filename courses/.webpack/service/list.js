@@ -88,19 +88,25 @@ var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 */
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, result, enrolledCoursesParams, enrolledCoursesResults;
+    var show_mode, params, result, enrolledCoursesParams, enrolledCoursesResults;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
+            show_mode = 'published';
             //process keys is applicable
+
             if (event.queryStringParameters) {
               if (event.queryStringParameters.show_mode) {
-                console.log('should process show_mode');
+                show_mode = event.queryStringParameters.show_mode;
+                //check if this user allowed to view everything
               }
             }
 
-            params = {
+            params = show_mode === 'all' ? {
+              TableName: "courses",
+              Limit: 20
+            } : {
               TableName: "courses",
               FilterExpression: "#s =  :s",
               ExpressionAttributeValues: {
@@ -112,25 +118,25 @@ var main = exports.main = function () {
               Limit: 20
             };
             result = null;
-            _context.prev = 3;
-            _context.next = 6;
+            _context.prev = 4;
+            _context.next = 7;
             return dynamoDbLib.call("scan", params);
 
-          case 6:
+          case 7:
             result = _context.sent;
-            _context.next = 15;
+            _context.next = 16;
             break;
 
-          case 9:
-            _context.prev = 9;
-            _context.t0 = _context["catch"](3);
+          case 10:
+            _context.prev = 10;
+            _context.t0 = _context["catch"](4);
 
             console.log('error scanning courses');
             console.log(_context.t0);
             callback(null, (0, _responseLib.failure)({ status: false }));
             return _context.abrupt("return");
 
-          case 15:
+          case 16:
 
             // get current enrolled courses
             enrolledCoursesParams = {
@@ -141,30 +147,30 @@ var main = exports.main = function () {
               }
             };
             enrolledCoursesResults = null;
-            _context.prev = 17;
-            _context.next = 20;
+            _context.prev = 18;
+            _context.next = 21;
             return dynamoDbLib.call('query', enrolledCoursesParams);
 
-          case 20:
+          case 21:
             enrolledCoursesResults = _context.sent;
 
             result.Items["enrolled"] = enrolledCoursesResults;
             callback(null, (0, _responseLib.success)(result.Items));
-            _context.next = 28;
+            _context.next = 29;
             break;
 
-          case 25:
-            _context.prev = 25;
-            _context.t1 = _context["catch"](17);
+          case 26:
+            _context.prev = 26;
+            _context.t1 = _context["catch"](18);
 
             callback(null, (0, _responseLib.failure)({ status: false }));
 
-          case 28:
+          case 29:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[3, 9], [17, 25]]);
+    }, _callee, this, [[4, 10], [18, 26]]);
   }));
 
   return function main(_x, _x2, _x3) {

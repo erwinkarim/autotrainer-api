@@ -5,16 +5,19 @@ import { success, failure } from "./libs/response-lib";
   get recent courses
 */
 export async function main(event, context, callback) {
+  var show_mode = 'published'
   //process keys is applicable
   if(event.queryStringParameters){
     if(event.queryStringParameters.show_mode){
-      console.log('should process show_mode');
-      //check if this user allowed to view everything
-      return;
+      //TODO: check if this user allowed to view everything
+      show_mode = event.queryStringParameters.show_mode;
     }
   }
 
-  var params = {
+  const params = show_mode === 'all' ? {
+    TableName: "courses",
+    Limit: 20
+  } : {
     TableName: "courses",
     FilterExpression: "#s =  :s",
     ExpressionAttributeValues: {
@@ -25,6 +28,7 @@ export async function main(event, context, callback) {
     },
     Limit: 20
   };
+
   var result = null;
 
   try {

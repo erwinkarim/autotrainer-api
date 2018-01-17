@@ -9,13 +9,15 @@ import AWS from 'aws-sdk';
 */
 export async function main(event, context, callback) {
   //attemp to get cognito attributes from given identityId
+  const accountId = '167457616767';
   const identityId = 'ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129';
   const identityPoolId = 'ap-southeast-1:d305ce7d-b107-480b-93cd-a4c0c9881a42';
   const userPoolId = 'ap-southeast-1_SDZuB7De0';
   const clientId = '1pdpd2tbujfndf8fbb4udmh301';
   const userName = 'Google_113291405746651466763';
-  const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
-  //const identSrv = new AWS.CognitoIdentity({region:'ap-southeast-1'});
+  const token = 'eyJraWQiOiJLdG54a3V4ZTJYcjlkcXV2Z3NOaE53dXowWkV6SlFBTmNrdExRQVNyNzg4PSIsImFsZyI6IlJTMjU2In0';
+  //const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
+
   console.log('context dump');
   console.log(context);
 
@@ -23,6 +25,7 @@ export async function main(event, context, callback) {
   console.log(event.requestContext.identity);
 
   callback(null, success({ status:true }));
+
   /*
   // grabs user data from cognito username
   // identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
