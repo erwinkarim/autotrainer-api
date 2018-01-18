@@ -18,17 +18,21 @@ export async function main(event, context, callback) {
   const token = 'eyJraWQiOiJLdG54a3V4ZTJYcjlkcXV2Z3NOaE53dXowWkV6SlFBTmNrdExRQVNyNzg4PSIsImFsZyI6IlJTMjU2In0';
   //const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
 
-  console.log('context dump');
-  console.log(context);
+  console.log('context dump', context);
 
-  console.log('event.requestContext.identity dump:');
-  console.log(event.requestContext.identity);
+  console.log(event.requestContext.identity, 'event.requestContext.identity dump:');
 
-  callback(null, success({ status:true }));
 
-  /*
+
+  //callback(null, success({ status:true }));
+
+
   // grabs user data from cognito username
-  // identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
+  const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
+  const params = {
+    UserPoolId: userPoolId,
+    Username: userName
+  };
   identSrv.adminGetUser(params, (err, data) => {
     if(err){
       console.log('error getting data');
@@ -37,8 +41,7 @@ export async function main(event, context, callback) {
       console.log('data', data);
     }
 
-  })
-  */
+  });
 
   /*
   const params = {
@@ -57,5 +60,7 @@ export async function main(event, context, callback) {
   { IdentityId: 'ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129', Logins: [ 'accounts.google.com' ],
   CreationDate: 2017-11-23T00:29:29.915Z, LastModifiedDate: 2017-11-23T00:29:29.935Z }
   */
+
+  callback(null, success({ status:true }));
 
 }

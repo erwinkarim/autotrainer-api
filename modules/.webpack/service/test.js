@@ -109,47 +109,28 @@ var main = exports.main = function () {
             token = 'eyJraWQiOiJLdG54a3V4ZTJYcjlkcXV2Z3NOaE53dXowWkV6SlFBTmNrdExRQVNyNzg4PSIsImFsZyI6IlJTMjU2In0';
             //const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
 
+            console.log('context dump', context);
 
-            identSrv = new _awsSdk2.default.CognitoIdentity({ region: 'ap-southeast-1' });
+            console.log(event.requestContext.identity, 'event.requestContext.identity dump:');
+
+            //callback(null, success({ status:true }));
+
+
+            // grabs user data from cognito username
+            identSrv = new _awsSdk2.default.CognitoIdentityServiceProvider({ region: 'ap-southeast-1' });
             params = {
-              IdentityPoolId: identityPoolId,
-              AccountId: accountId,
-              Logins: {
-                'accounts.google.com': token
-              }
+              UserPoolId: userPoolId,
+              Username: userName
             };
 
-
-            identSrv.getId(params, function (err, data) {
+            identSrv.adminGetUser(params, function (err, data) {
               if (err) {
-                console.log('error getting Id');
-                console.log(err);
-              } else {
-                console.log('data dump');
-                console.log(data);
-              }
-            });
-
-            /*
-            console.log('context dump');
-            console.log(context);
-             console.log('event.requestContext.identity dump:');
-            console.log(event.requestContext.identity);
-             callback(null, success({ status:true }));
-            */
-
-            /*
-            // grabs user data from cognito username
-            // identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
-            identSrv.adminGetUser(params, (err, data) => {
-              if(err){
                 console.log('error getting data');
                 console.log(err);
               } else {
                 console.log('data', data);
               }
-             })
-            */
+            });
 
             /*
             const params = {
@@ -168,7 +149,9 @@ var main = exports.main = function () {
             CreationDate: 2017-11-23T00:29:29.915Z, LastModifiedDate: 2017-11-23T00:29:29.935Z }
             */
 
-          case 10:
+            callback(null, (0, _responseLib.success)({ status: true }));
+
+          case 13:
           case "end":
             return _context.stop();
         }
