@@ -82,7 +82,7 @@ async function updateMeta(result){
     await identSrv.adminGetUser({ UserPoolId:userPoolId, Username: elm.username}, (err,data) => {
       if(err){
         console.log('error looking up');
-        console.err(err)
+        console.error(err)
       } else {
         var findResult = result.Items.find( (resultElm) => resultElm.userId === elm.identityId );
         console.log('findResult', findResult);

@@ -8,6 +8,10 @@ export async function main(event, context, callback) {
   // 1. get the appropiate enrolment entry
   // 2. update the entry to append the progress field if necessary
   // 3. issue cert if all classes has been enrolled
+  /*
+    check if the user is enrolled in the course
+   */
+  console.log('checking enrolment');
   var params = {
     TableName: "enrolment",
     Key: {
@@ -15,6 +19,7 @@ export async function main(event, context, callback) {
       courseId: event.pathParameters.id
     }
   };
+
   var result = null;
   try{
     result = await dynamoDbLib.call("get", params);
@@ -24,20 +29,28 @@ export async function main(event, context, callback) {
     callback(null, failure({ status: false }));
   }
 
-  // if the course has been attended, return true;
+  // user is not enrolled in the course, return failed
   if(!result.Item){
     callback(null, failure({ status: false }));
     return -1;
   }
 
-  console.log('result.Item.progress', result.Item.progress);
   var classes = result.Item.progress;
-  if(!classes.includes(event.pathParameters.moduleId)){
-    console.log('push moduleId into classes');
-    classes.push(event.pathParameters.moduleId);
+  /*
+    check if the user attend the module, append when necessary
+   */
+  if(classes.includes(event.pathParameters.moduleId)){
+    console.log('user already attend module');
+    callback(null, success({ status: true }));
+    return 0;
   };
 
-  console.log('classes', classes);
+  /*
+    User hasn't attend, class, update
+   */
+  console.log('push moduleId into classes');
+  classes.push(event.pathParameters.moduleId);
+
   // now append the progress field w/ the moduleId
   params = {
     TableName: "enrolment",
