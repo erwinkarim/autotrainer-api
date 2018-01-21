@@ -15,6 +15,7 @@ export async function main(event, context, callback) {
       description: data.description,
       status: 'unpublished',
       moduleCount: 0,
+      title_font_color: 'black',
       //these two will be added at patch stage
       //picture: '',
       price: 39.99,
