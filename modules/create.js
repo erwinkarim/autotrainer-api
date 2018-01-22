@@ -19,6 +19,7 @@ export async function main(event, context, callback) {
       description: data.description,
       moduleType: data.moduleType,
       order: parseInt(data.order, 10),
+      publish_status: 'unpublished',
       createdAt: new Date().getTime()
     }
   };

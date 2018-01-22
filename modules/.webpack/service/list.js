@@ -60,17 +60,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
-
-module.exports = require("aws-sdk");
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -81,82 +75,76 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.main = undefined;
 
-var _regenerator = __webpack_require__(2);
+var _regenerator = __webpack_require__(1);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _asyncToGenerator2 = __webpack_require__(3);
+var _asyncToGenerator2 = __webpack_require__(2);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
 /*
-  test function to go test queries
+  get modules belongs to courseId, otherwise, show all
 */
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var accountId, identityId, identityPoolId, userPoolId, clientId, userName, token, identSrv, params;
+    var params, result;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            //attemp to get cognito attributes from given identityId
-            accountId = '167457616767';
-            identityId = 'ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129';
-            identityPoolId = 'ap-southeast-1:d305ce7d-b107-480b-93cd-a4c0c9881a42';
-            userPoolId = 'ap-southeast-1_SDZuB7De0';
-            clientId = '1pdpd2tbujfndf8fbb4udmh301';
-            userName = 'Google_113291405746651466763';
-            token = 'eyJraWQiOiJLdG54a3V4ZTJYcjlkcXV2Z3NOaE53dXowWkV6SlFBTmNrdExRQVNyNzg4PSIsImFsZyI6IlJTMjU2In0';
-            //const identSrv = new AWS.CognitoIdentityServiceProvider({region:'ap-southeast-1'});
-
-            console.log('context dump', context);
-
-            console.log(event.requestContext.identity, 'event.requestContext.identity dump:');
-
-            //callback(null, success({ status:true }));
-
-
-            // grabs user data from cognito username
-            identSrv = new _awsSdk2.default.CognitoIdentityServiceProvider({ region: 'ap-southeast-1' });
+            //should check if current user can see all modules
             params = {
-              UserPoolId: userPoolId,
-              Username: userName
+              //show all
+              TableName: "modules",
+              KeyConditionExpression: "courseId = :courseId",
+              ExpressionAttributeValues: {
+                ":courseId": event.queryStringParameters.courseId,
+                ":publish_status": 'published'
+              },
+              FilterExpression: "publish_status = :publish_status",
+              ExpressionAttributeNames: { '#o': 'order' },
+              ProjectionExpression: "courseId, moduleId, userId, moduleType, title, description, createdAt, #o, publish_status"
             };
 
-            identSrv.adminGetUser(params, function (err, data) {
-              if (err) {
-                console.log('error getting data');
-                console.log(err);
-              } else {
-                console.log('data', data);
-              }
-            });
 
-            /*
-            const params = {
-              IdentityId: identityId
+            if (event.queryStringParameters.publish_status) {
+              if (event.queryStringParameters.publish_status === 'all') {
+                //show all, works only if you own the modules
+                //delete params.FilterExpression;
+                params.FilterExpression = 'userId = :userId';
+                delete params.ExpressionAttributeValues[':publish_status'];
+                params.ExpressionAttributeValues[':userId'] = event.requestContext.identity.cognitoIdentityId;
+              } else {
+                params.ExpressionAttributeValues[':publish_status'] = event.queryStringParameters.publish_status;
+              };
             };
-             //const identSrv = new AWS.CognitoIdentity({region:'ap-southeast-1'});
-            identSrv.describeIdentity(params, (err, data) => {
-              if(err){
-                console.log('error getting id');
-                console.log(err);
-              } else {
-                console.log('data', data);
-              }
-            })
-            { IdentityId: 'ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129', Logins: [ 'accounts.google.com' ],
-            CreationDate: 2017-11-23T00:29:29.915Z, LastModifiedDate: 2017-11-23T00:29:29.935Z }
-            */
 
-            callback(null, (0, _responseLib.success)({ status: true }));
+            _context.prev = 3;
+            _context.next = 6;
+            return dynamoDbLib.call("query", params);
 
-          case 13:
+          case 6:
+            result = _context.sent;
+
+            // Return the matching list of items in response body
+            callback(null, (0, _responseLib.success)(result.Items));
+            _context.next = 14;
+            break;
+
+          case 10:
+            _context.prev = 10;
+            _context.t0 = _context["catch"](3);
+
+            console.log(_context.t0);
+            callback(null, (0, _responseLib.failure)({ status: false }));
+
+          case 14:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this);
+    }, _callee, this, [[3, 10]]);
   }));
 
   return function main(_x, _x2, _x3) {
@@ -164,44 +152,30 @@ var main = exports.main = function () {
   };
 }();
 
-var _uuid = __webpack_require__(4);
-
-var _uuid2 = _interopRequireDefault(_uuid);
-
-var _dynamodbLib = __webpack_require__(5);
+var _dynamodbLib = __webpack_require__(3);
 
 var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
 
-var _responseLib = __webpack_require__(6);
-
-var _awsSdk = __webpack_require__(0);
-
-var _awsSdk2 = _interopRequireDefault(_awsSdk);
+var _responseLib = __webpack_require__(5);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/regenerator");
 
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/helpers/asyncToGenerator");
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = require("uuid");
-
-/***/ }),
-/* 5 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -212,7 +186,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.call = call;
 
-var _awsSdk = __webpack_require__(0);
+var _awsSdk = __webpack_require__(4);
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
 
@@ -227,7 +201,13 @@ function call(action, params) {
 }
 
 /***/ }),
-/* 6 */
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("aws-sdk");
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -237,7 +217,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(7);
+var _stringify = __webpack_require__(6);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -266,7 +246,7 @@ function buildResponse(statusCode, body) {
 }
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");

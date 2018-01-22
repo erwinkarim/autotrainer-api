@@ -1,10 +1,11 @@
 {
-  "queryStringParameters": {
-    "courseId": "786e34c0-de39-11e7-918c-73a3bea17614"
+  "queryStringParameters":{
+    "courseId": "786e34c0-de39-11e7-918c-73a3bea17614",
+    "publish_status": "all"
   },
   "requestContext": {
     "identity": {
-      "cognitoIdentityId": "USER-SUB-1234"
+      "cognitoIdentityId": "ap-southeast-1:c03e6df4-c25a-46c1-8c4e-dca44866038f"
     }
   }
 }
