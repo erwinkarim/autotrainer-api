@@ -25,14 +25,14 @@ export async function main(event, context, callback) {
     callback(null, failure({ status: false }));
   }
 
+  //attemp to update module count in course
   try {
-    //attemp to update module count in course
     await update_module_counts(event.queryStringParameters.courseId,
       event.requestContext.identity.cognitoIdentityId);
 
     // everything ok, call back
     callback(null, success({ status: true }));
-    
+
   } catch(e){
     callback(null, failure({ status: false }));
 
