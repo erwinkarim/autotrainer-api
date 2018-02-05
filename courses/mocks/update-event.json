@@ -1,5 +1,5 @@
 {
-  "body": "{ \"name\":\"brand new world\", \"tagline\":\"a new tagline\", \"description\":\"brand new content\", \"status\": \"published\", \"price\":40.01 , \"picture\":\"new.jpg\", \"bg_pic\":\"bg_pic.jpg\" }",
+  "body": "{ \"name\":\"brand new world\", \"tagline\":\"a new tagline\", \"description\":\"brand new content\", \"status\": \"published\", \"price\":40.01 , \"picture\":\"new.jpg\", \"bg_pic\":\"bg_pic.jpg\", \"clientList\":[\"256x256 WBG-rd.png\"] }",
   "pathParameters": {
     "id": "2c51a490-dd36-11e7-9b9b-57c32abddbf2"
   },
