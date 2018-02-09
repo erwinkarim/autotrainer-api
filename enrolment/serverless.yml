@@ -110,3 +110,14 @@ functions:
           method: post
           cors: true
           authorizer: aws_iam
+  cert_lookup:
+    # Defines an HTTP API endpoint that calls the main function in ATTEND.js
+    # - path: url path is /enrolment/{id}/invite
+    # - method: post request
+    handler: cert_lookup.main
+    events:
+      - http:
+          path: enrolment/cert_lookup
+          method: post
+          cors: true
+          authorizer: aws_iam

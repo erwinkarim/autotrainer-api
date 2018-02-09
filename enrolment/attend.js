@@ -1,5 +1,6 @@
 import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
+import check_cert from './libs/check-cert.js';
 
 /*
   update the record that userId has attend the class X of course Y
@@ -36,18 +37,15 @@ export async function main(event, context, callback) {
   }
 
   var classes = result.Item.progress;
-  /*
-    check if the user attend the module, append when necessary
-   */
+
+  //check if the user attend the module, append when necessary
   if(classes.includes(event.pathParameters.moduleId)){
     console.log('user already attend module');
     callback(null, success({ status: true }));
     return 0;
   };
 
-  /*
-    User hasn't attend, class, update
-   */
+  //User hasn't attend, class, update
   console.log('push moduleId into classes');
   classes.push(event.pathParameters.moduleId);
 
@@ -74,7 +72,7 @@ export async function main(event, context, callback) {
   try {
     console.log('update new enrolment item');
     const result = await dynamoDbLib.call("update", params);
-    callback(null, success({ status: true }));
+    //callback(null, success({ status: true }));
   } catch (e) {
     console.log('failed to update progress');
     console.log(e)
@@ -82,4 +80,13 @@ export async function main(event, context, callback) {
   }
 
   //if all the modules in the course has been attended, issue attandance cert.
+  try {
+    await check_cert(event.requestContext.identity.cognitoIdentityId, event.pathParameters.id);
+    callback(null, success({ status: true }));
+  } catch(e){
+    console.log('failed to check cert');
+    console.log(e);
+    callback(null, failure({ status: false }));
+  }
+
 }
