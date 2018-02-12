@@ -81,8 +81,13 @@ export async function main(event, context, callback) {
 
   //if all the modules in the course has been attended, issue attandance cert.
   try {
-    await check_cert(event.requestContext.identity.cognitoIdentityId, event.pathParameters.id);
-    callback(null, success({ status: true }));
+    const checkResult = await check_cert(event.requestContext.identity.cognitoIdentityId, event.pathParameters.id);
+    if(checkResult === 0){
+      callback(null, success({ status: checkResult, message:'New certificate issued' }));
+    } else {
+      callback(null, success({ status: checkResult }));
+
+    }
   } catch(e){
     console.log('failed to check cert');
     console.log(e);

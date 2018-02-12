@@ -16,12 +16,13 @@ export async function main(event, context, callback) {
     }
   }
 
-  console.log('params', params);
+  //console.log('params', params);
 
   //cert look up
   try {
     var result = await dynamoDbLib.call('query', params);
-    if(result.Items){
+    //console.log('result.Items', result.Items);
+    if(result.Items.length > 0){
       callback(null, success(result.Items[0]));
     } else {
       callback(null, failure({ status: false, error: "Item not found." }));

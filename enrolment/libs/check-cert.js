@@ -7,6 +7,12 @@ import uuid from "uuid";
   * if the user recently complete the attendance (published_count === progress.length)
     generate the cert
   * if not complete attendance, ignore
+
+  * status code returns
+    -1 current progress is less than publishedModuleCount
+    0 new certificate  issued
+    1 certificate already issued
+    2 publishedModuleCount column does not exists in course table
  */
 export default async function check_cert(userId, courseId){
 
@@ -27,8 +33,8 @@ export default async function check_cert(userId, courseId){
   var result = null;
   try {
     result = await dynamoDbLib.call('batchGet', params);
-    console.log('result.Responses.courses', result.Responses.courses);
-    console.log('result.Responses.enrolment', result.Responses.enrolment);
+    //console.log('result.Responses.courses', result.Responses.courses);
+    //console.log('result.Responses.enrolment', result.Responses.enrolment);
   } catch(e){
     throw 'error getting course/enrolment data';
     console.log(e);
@@ -41,23 +47,23 @@ export default async function check_cert(userId, courseId){
   //if cert is already there, return
   if(enrolment.cert){
     console.log('Certificate already exists');
-    return;
+    return 1;
   }
 
   //if publishedModuleCount does not exist, ignore
   if(!course.publishedModuleCount){
     console.log('publishedModuleCount does not exists');
-    return;
+    return 2;
   }
 
   //if current progress is less than course count
   if(enrolment.progress.length < course.publishedModuleCount){
-    return;
+    return -1;
   }
 
   //current situation is cert is not there and enrolment progress matches publishedModuleCount
   // create the cert
-  console.log('course complete. start attendance certificate issuance');
+  //console.log('course complete. start attendance certificate issuance');
   const cert = {
     issued: Date.now(),
     id: uuid.v4()
@@ -81,8 +87,8 @@ export default async function check_cert(userId, courseId){
 
   try{
     const certResult = await dynamoDbLib.call('update', updateParams);
-    console.log('certResult', certResult);
-    return true;
+    //console.log('certResult', certResult);
+    return 0;
 
   }catch(e){
     console.log(e);
