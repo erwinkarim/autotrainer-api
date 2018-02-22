@@ -1,7 +1,7 @@
 {
-  "body": "{\"inviteList\":[ {\"email\":\"erwinkarim@gmail.com\", \"name\":\"Malek\"}], \"inviteMessage\":\"lorem ipsum blah, blah\"}",
+  "body": "{ \"inviteList\": [ {\"email\":\"erwinkarim@hotmail.com\", \"name\":\"Tuan Server\"} ], \"meta\": { \"course_owner\":\"the course owner\"} }",
   "pathParameters": {
-    "id": "test-course"
+    "id": "786e34c0-de39-11e7-918c-73a3bea17614"
   },
   "requestContext": {
     "identity": {

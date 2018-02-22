@@ -8,6 +8,7 @@ plugins:
 custom:
   webpackIncludeModules: true
 
+
 provider:
   name: aws
   runtime: nodejs6.10
@@ -93,6 +94,8 @@ functions:
     # - path: url path is /enrolment/{id}/invite
     # - method: post request
     handler: invite.main
+    environment:
+      SENDGRID_API_KEY: ${ file(./keys.json):sendgrid }
     events:
       - http:
           path: enrolment/{id}/invite

@@ -85,179 +85,187 @@ var _regenerator = __webpack_require__(2);
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
 
-var _promise = __webpack_require__(3);
-
-var _promise2 = _interopRequireDefault(_promise);
-
-var _asyncToGenerator2 = __webpack_require__(4);
+var _asyncToGenerator2 = __webpack_require__(3);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
+/*
+  invite people to the course for enrollment
+  * required:-
+    body.inviteList = names and email to be invited
+    body.meta = constains meta info like course_owner (saving a lookup)
+    pathParameters.id = the courseId to be included
+  * plan: -
+    use sendgrid to send the emails
+*/
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
-    var params, cert, result, infoParams, identSrv, userPoolId, getUserFn;
+    var body, params, result, createParams, personalize, msg;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            //go find that cert
+            body = JSON.parse(event.body);
+
+            //get course info, description, etc
+
             params = {
-              TableName: "enrolment",
-              IndexName: "certId-index",
-              KeyConditionExpression: "certId = :certId",
-              ExpressionAttributeValues: {
-                ":certId": event.queryStringParameters.certId
-              }
-
-              //console.log('params', params);
-
-              //cert look up
+              TableName: 'courses',
+              Key: { courseId: event.pathParameters.id }
             };
-            cert = null;
             result = null;
             _context.prev = 3;
             _context.next = 6;
-            return dynamoDbLib.call('query', params);
+            return dynamoDbLib.call('get', params);
 
           case 6:
             result = _context.sent;
 
-            if (!(result.Items.length > 0)) {
-              _context.next = 11;
+            if (result.Item) {
+              _context.next = 10;
               break;
             }
 
-            //callback(null, success(result.Items[0]));
-            cert = result.Items[0];
-            _context.next = 13;
-            break;
-
-          case 11:
             callback(null, (0, _responseLib.failure)({ status: false, error: "Item not found." }));
             return _context.abrupt("return");
 
-          case 13:
-            ;
-
-            _context.next = 22;
+          case 10:
+            _context.next = 18;
             break;
 
-          case 16:
-            _context.prev = 16;
+          case 12:
+            _context.prev = 12;
             _context.t0 = _context["catch"](3);
 
-            console.log('error executing query');
+            console.log('error getting course info');
             console.log(_context.t0);
-            callback(null, (0, _responseLib.failure)({ status: false }));
+            callback(null, (0, _responseLib.failure)({ status: false, error: "Error getting course info." }));
             return _context.abrupt("return");
 
-          case 22:
+          case 18:
 
-            //get additional info (username, coursename, etc ...)
-            infoParams = {
+            //add the emails info in the enrolment table
+            /*
+              just add the email addresses as the userId so other people being invited for the course would know
+            */
+            createParams = {
               RequestItems: {
-                'courses': {
-                  Keys: [{ courseId: cert.courseId }]
-                },
-                'identLookUp': {
-                  Keys: [{ identityId: cert.userId }]
-                }
+                'enrolment': body.inviteList.map(function (e, i) {
+                  return {
+                    PutRequest: {
+                      Item: {
+                        'userId': e.email,
+                        'courseId': event.pathParameters.id,
+                        'createdAt': Date.now(),
+                        'progress': [],
+                        'status': 'invited'
+                      }
+                    }
+                  };
+                })
               }
             };
-            _context.prev = 23;
-            _context.next = 26;
-            return dynamoDbLib.call('batchGet', infoParams);
+            _context.prev = 19;
+            _context.next = 22;
+            return dynamoDbLib.call('batchWrite', createParams);
 
-          case 26:
-            result = _context.sent;
-
-            cert.coursename = result.Responses.courses[0].name;
-            cert.username = result.Responses.identLookUp[0].username;
-
-            //callback(null, success(cert));
-
-            _context.next = 37;
+          case 22:
+            _context.next = 30;
             break;
 
-          case 31:
-            _context.prev = 31;
-            _context.t1 = _context["catch"](23);
+          case 24:
+            _context.prev = 24;
+            _context.t1 = _context["catch"](19);
 
-            console.log('error getting additional info');
+            console.log('error creating enrolment');
             console.log(_context.t1);
-            callback(null, (0, _responseLib.failure)({ status: false }));
+            callback(null, (0, _responseLib.failure)({ status: false, error: "Unable to create enrolment items." }));
             return _context.abrupt("return");
 
-          case 37:
-
-            //get actual name from the username
-            identSrv = new _awsSdk2.default.CognitoIdentityServiceProvider({ region: 'ap-southeast-1' });
-            userPoolId = 'ap-southeast-1_SDZuB7De0';
-            _context.prev = 39;
-
-            //the call back is not being waited, have to do a 1-second sleep timer for now
-            //get actual name
-            getUserFn = new _promise2.default(function (resolve, reject) {
-              identSrv.adminGetUser({ UserPoolId: userPoolId, Username: cert.username }, function (err, data) {
-                if (err) {
-                  console.log('error looking up', cert);
-                  console.error(err);
-                } else {
-                  cert.actualname = data.UserAttributes.find(function (elm) {
-                    return elm.Name === 'name';
-                  }).Value;
-                  //console.log('cert.actualname', cert.actualname);
-                  resolve();
-                };
-              });
+          case 30:
+            //setup personalization for each recipient
+            personalize = body.inviteList.map(function (e, i) {
+              return {
+                key: i,
+                to: { email: e.email, name: e.name },
+                substitutions: { invitee: e.name }
+              };
             });
 
-            //now actually drop the cert after callback completed
+            //now actually send the email
 
-            getUserFn.then(function () {
-              callback(null, (0, _responseLib.success)(cert));
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+            sgMail.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
+            msg = {
+              from: {
+                name: 'learn@AP',
+                email: 'learn@actuarialpartners.com'
+              },
+              templateId: 'f927fce9-07fe-48ac-853e-5f9421d51889',
+              personalizations: personalize,
+              substitutions: {
+                course_name: result.Item.name,
+                course_owner: body.meta.course_owner,
+                course_description: result.Item.description,
+                course_url: "https://bazinga.actuarialpartners.com/courses/promo/" + event.pathParameters.id
+              }
+            };
+
+
+            sgMail.send(msg).then(function () {
+              console.log('successfully sent emails');
+              callback(null, (0, _responseLib.success)({ msg: 'success' }));
+            }).catch(function (err) {
+              console.log('error sending mails');
+              console.log(err.toString());
+              callback(null, (0, _responseLib.failure)({ status: false, error: "error sending emails" }));
             });
 
-            _context.next = 49;
-            break;
+            /*
+              send emails to everyone in the inviteList w/ the inviteMessage about
+              pathParameters.id course
+            */
 
-          case 44:
-            _context.prev = 44;
-            _context.t2 = _context["catch"](39);
+            /*
+              add the people in the invite list to the enrolment table
+                if the emails are not in federated identity, then save as email,
+                so it'd be converted into federated identity as the user logs in
+            */
 
-            console.log('error retriving user info');
-            console.log(_context.t2);
+            /*
+              currently, can only send to verified addresses due to AWS default sending limit.
+              already requested to update the limits on 19/2/2018, we'll see what will happens next.
+            */
             return _context.abrupt("return");
 
-          case 49:
+          case 36:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[3, 16], [23, 31], [39, 44]]);
+    }, _callee, this, [[3, 12], [19, 24]]);
   }));
 
   return function main(_x, _x2, _x3) {
     return _ref.apply(this, arguments);
   };
-}(); /*
-       API call to find the cert
-     */
+}();
 
-
-var _responseLib = __webpack_require__(5);
-
-var _dynamodbLib = __webpack_require__(7);
-
-var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
+var _responseLib = __webpack_require__(4);
 
 var _awsSdk = __webpack_require__(0);
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
 
+var _dynamodbLib = __webpack_require__(6);
+
+var dynamoDbLib = _interopRequireWildcard(_dynamodbLib);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var sgMail = __webpack_require__(7);
 
 /***/ }),
 /* 2 */
@@ -269,16 +277,10 @@ module.exports = require("babel-runtime/regenerator");
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = require("babel-runtime/core-js/promise");
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
 module.exports = require("babel-runtime/helpers/asyncToGenerator");
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -288,7 +290,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _stringify = __webpack_require__(6);
+var _stringify = __webpack_require__(5);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -317,13 +319,13 @@ function buildResponse(statusCode, body) {
 }
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -347,6 +349,12 @@ function call(action, params) {
 
   return dynamoDb[action](params).promise();
 }
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = require("@sendgrid/mail");
 
 /***/ })
 /******/ ])));

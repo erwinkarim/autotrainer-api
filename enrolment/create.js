@@ -10,7 +10,8 @@ export async function main(event, context, callback) {
       userId: event.requestContext.identity.cognitoIdentityId,
       courseId: data.courseId,
       createdAt: new Date().getTime(),
-      progress: []
+      progress: [],
+      status: 'enrolled'
     }
   };
 
