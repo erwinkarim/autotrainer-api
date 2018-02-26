@@ -1,0 +1,13 @@
+{
+  "pathParameters": {
+    "id": "test-course"
+  },
+  "queryStringParameters": {
+    "email": "erwinkarim@gmail.com"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

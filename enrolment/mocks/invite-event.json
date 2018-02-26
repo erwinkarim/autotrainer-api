@@ -1,5 +1,5 @@
 {
-  "body": "{ \"inviteList\": [ {\"email\":\"erwinkarim@hotmail.com\", \"name\":\"Tuan Server\"} ], \"meta\": { \"course_owner\":\"the course owner\"} }",
+  "body": "{ \"inviteList\": [ {\"email\":\"erwinkarim@gmail.com\", \"name\":\"En. Malek\"} ], \"meta\": { \"course_owner\":\"the course owner\"} }",
   "pathParameters": {
     "id": "786e34c0-de39-11e7-918c-73a3bea17614"
   },
