@@ -11,15 +11,53 @@ export async function main(event, context, callback) {
   const data = JSON.parse(event.body);
 
   //if email context, find the current enrolment and update that instead
+  // update: can't update the entry because userId is the key, instead need to delete that and let it create a new entry for this
   if(data.enrolmentContext){
     if(data.enrolmentContext === 'email'){
-      //find the current enrolment record
-      //if found, update to current user id
-      //if not found, ignore this and let it create a new enrolment record
+      //get enrolment data
+      //if data found, delete it and let it create a new entry w/ enrolled key
+      const getParams = {
+        TableName:'enrolment',
+        Key: {
+          userId: data.email,
+          courseId: data.courseId
+        }
+      }
 
+      var result = null;
+      try{
+        result = await dynamoDbLib.call('get', getParams);
+      } catch(e){
+        console.log('error getting data');
+        console.log(e);
+        callback(null, failure({status:false}))
+        return;
+      }
+
+      //delete if found
+      if(result.Item){
+        const deleteParams = {
+          TableName:'enrolment',
+          Key: {
+            userId: data.email,
+            courseId: data.courseId
+          }
+        };
+
+        try{
+          await dynamoDbLib.call('delete', deleteParams);
+        } catch(e){
+          console.log('error deleting entry');
+          console.log(e);
+          callback(null, failure({status:false}))
+          return;
+        }
+
+      };
     };
   };
 
+  //create new enrolment record
   const params = {
     TableName: "enrolment",
     Item: {

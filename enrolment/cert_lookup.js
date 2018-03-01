@@ -85,7 +85,6 @@ export async function main(event, context, callback) {
           resolve();
         };
       });
-
     })
 
     //now actually drop the cert after callback completed

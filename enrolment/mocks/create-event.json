@@ -1,5 +1,5 @@
 {
-  "body": "{ \"courseId\":\"786e34c0-de39-11e7-918c-73a3bea17614\"}",
+  "body": "{ \"courseId\":\"786e34c0-de39-11e7-918c-73a3bea17614\", \"enrolmentContext\":\"email\", \"email\":\"erwinkarim@gmail.com\"}",
   "requestContext": {
     "identity": {
       "cognitoIdentityId": "USER-SUB-1234"

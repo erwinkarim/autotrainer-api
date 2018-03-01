@@ -72,7 +72,7 @@ async function updateMeta(result){
         lookupPromises.push(
           identSrv.adminGetUser({ UserPoolId:userPoolId, Username: elm.username}, (err,data) => {
             if(err){
-              console.log('err');
+              console.log(`error looking up ${elm.username}`);
             } else {
               item['userMeta'] = data;
               //console.log(`insert userMeta for ${elm.identityId} done.`);
@@ -83,6 +83,9 @@ async function updateMeta(result){
 
       //theorically wait until all lookup is done.
       Promise.all( lookupPromises ).then( () => {
+        resolve();
+      }, () => {
+        console.log('some user can\'t be found');
         resolve();
       })
     });
