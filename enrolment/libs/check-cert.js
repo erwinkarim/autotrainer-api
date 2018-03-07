@@ -88,11 +88,11 @@ export default async function check_cert(userId, courseId){
   try{
     const certResult = await dynamoDbLib.call('update', updateParams);
     //console.log('certResult', certResult);
-    return 0;
+    return certResult;
 
   }catch(e){
     console.log(e);
-    throw 'error updating enrolment for cert issuance';
+    return Promise.reject( 'error updating enrolment for cert issuance' );
   }
 
 

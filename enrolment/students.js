@@ -69,13 +69,14 @@ async function updateMeta(result){
       userQueryResults.Responses.identLookUp.forEach( (elm) => {
         var item = result.Items.find( (e) => { return e.userId === elm.identityId; });
         item['username'] = elm.username;
+        //console.log(`looking up ${elm.username} from ${elm.identityId}`)
         lookupPromises.push(
           identSrv.adminGetUser({ UserPoolId:userPoolId, Username: elm.username}, (err,data) => {
             if(err){
               console.log(`error looking up ${elm.username}`);
             } else {
               item['userMeta'] = data;
-              //console.log(`insert userMeta for ${elm.identityId} done.`);
+              //console.log(`${elm.username} is ${data.UserAttributes.find((ualm) => { return ualm.Name === "name"}).Value}`)
             }
           }).promise()
         );
@@ -85,7 +86,7 @@ async function updateMeta(result){
       Promise.all( lookupPromises ).then( () => {
         resolve();
       }, () => {
-        console.log('some user can\'t be found');
+        console.log(`Unable to find some users`);
         resolve();
       })
     });

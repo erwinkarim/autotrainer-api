@@ -100,6 +100,8 @@ functions:
     # - path: url path is /notes/{id}
     # - method: GET request
     handler: attend.main
+    environment:
+      SENDGRID_API_KEY: ${ file(./keys.json):sendgrid }
     events:
       - http:
           path: enrolment/{id}/attend/{moduleId}
