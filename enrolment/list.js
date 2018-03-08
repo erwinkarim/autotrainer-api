@@ -5,6 +5,7 @@ import { success, failure } from "./libs/response-lib";
   list all courses attended by a particular user
   TODO: get enrolled courses info (title, etc
   TODO: get total modules for each course
+  TODO: handle issues when some of the courses enrolled no longer exists
 */
 export async function main(event, context, callback) {
   //get courses that is enrolled
@@ -25,6 +26,7 @@ export async function main(event, context, callback) {
   var result = null
   try {
     result = await dynamoDbLib.call("query", params);
+    //console.log('result', result.Items);
     // return the results if it's empty
     if(result.Items.length === 0){
       callback(null, success(result.Items));
@@ -36,6 +38,7 @@ export async function main(event, context, callback) {
     console.log('failure to get enrolment');
     console.log(e)
     callback(null, failure({ status: false }));
+    return;
   }
 
   // get list of courseIds based on enrolment
@@ -56,17 +59,20 @@ export async function main(event, context, callback) {
 
   try {
     result2 = await dynamoDbLib.call('batchGet', courseTitleParams);
-    console.log('result2', result2.Responses.courses);
-    // TODO: issues if the course got deleted
+    //console.log('result2', result2.Responses.courses);
     result.Items.map( (c, i) => {
-      c["name"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).name;
-      c["moduleCount"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).moduleCount;
-      c["publishedModuleCount"] = result2.Responses.courses.find( (e) => e.courseId === c.courseId).publishedModuleCount;
+      var courseHandle = result2.Responses.courses.find( (e => e.courseId === c.courseId));
+      if(courseHandle){
+        c["name"] = courseHandle["name"];
+        c["moduleCount"] = courseHandle["moduleCount"];
+        c["publishedModuleCount"] = courseHandle["publishedModuleCount"];
+      };
     });
     callback(null, success(result.Items));
   } catch (e){
     console.log(e);
     callback(null, failure({status: false}));
+    return;
 
   }
 }
