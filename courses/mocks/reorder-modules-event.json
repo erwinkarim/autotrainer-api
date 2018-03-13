@@ -1,0 +1,11 @@
+{
+  "body": "{\"new_order\": [{\"moduleId\":\"3ef40a30-f419-11e7-bc56-eb2a54223907\", \"order\":\"1\"}, {\"moduleId\":\"5fc73e10-de81-11e7-8c7c-078a2914ac12\", \"order\":\"2\"}, {\"moduleId\":\"60552960-de85-11e7-8d87-b9283f02c90f\", \"order\":\"3\"} ]}",
+  "pathParameters": {
+    "id": "course-test"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "USER-SUB-1234"
+    }
+  }
+}

@@ -98,3 +98,14 @@ functions:
           method: delete
           cors: true
           authorizer: aws_iam
+  reorder_modules:
+    # Defines an HTTP API endpoint that calls the main function in delete.js
+    # - path: url path is /notes/{id}
+    # - method: DELETE request
+    handler: reorder_modules.main
+    events:
+      - http:
+          path: courses/{id}/reorder_modules
+          method: post
+          cors: true
+          authorizer: aws_iam
