@@ -1,7 +1,7 @@
 {
   "queryStringParameters":{
     "courseId": "786e34c0-de39-11e7-918c-73a3bea17614",
-    "publish_status": "all"
+    "publish_status": "published"
   },
   "requestContext": {
     "identity": {
