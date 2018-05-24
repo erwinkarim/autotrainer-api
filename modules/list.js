@@ -34,7 +34,7 @@ export async function main(event, context, callback) {
   try {
     const result = await dynamoDbLib.call("query", params);
     // Return the matching list of items in response body
-    callback(null, success(result.Items));
+    callback(null, success(result.Items.sort((a,b) => a.order > b.order)));
   } catch (e) {
     console.log(e);
     callback(null, failure({ status: false }));

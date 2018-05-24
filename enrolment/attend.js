@@ -13,10 +13,11 @@ export async function main(event, context, callback) {
   // 2. update the entry to append the progress field if necessary
   // 3. issue cert if all classes has been enrolled
   // 3a. send email about cert issuenace
+  // 3b. send email to course owner about cert issuenace
   /*
     check if the user is enrolled in the course
    */
-  //console.log('checking enrolment');
+  // console.log('checking enrolment');
   var params = {
     TableName: "enrolment",
     Key: {
@@ -50,7 +51,7 @@ export async function main(event, context, callback) {
   };
 
   //User hasn't attend, class, update
-  //console.log('push moduleId into classes');
+  // console.log('push moduleId into classes');
   classes.push(event.pathParameters.moduleId);
 
   // now append the progress field w/ the moduleId
@@ -86,6 +87,7 @@ export async function main(event, context, callback) {
   }
 
   //if all the modules in the course has been attended, issue attandance cert.
+  // and update the status to complete
   // TODO: send email congratulating and link to the cert
   var checkResult = null;
   try {

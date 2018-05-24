@@ -128,7 +128,9 @@ var main = exports.main = function () {
             result = _context.sent;
 
             // Return the matching list of items in response body
-            callback(null, (0, _responseLib.success)(result.Items));
+            callback(null, (0, _responseLib.success)(result.Items.sort(function (a, b) {
+              return a.order > b.order;
+            })));
             _context.next = 14;
             break;
 

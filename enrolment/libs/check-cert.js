@@ -58,6 +58,7 @@ export default async function check_cert(userId, courseId){
 
   //if current progress is less than course count
   if(enrolment.progress.length < course.publishedModuleCount){
+    console.log('current progress is less than published module count');
     return -1;
   }
 
@@ -76,16 +77,21 @@ export default async function check_cert(userId, courseId){
       userId: userId
     },
     ConditionExpression: "userId = :userId",
-    UpdateExpression: `SET certId = :certId, certIssued = :certIssued`,
+    UpdateExpression: `SET certId = :certId, certIssued = :certIssued, #s = :newStatus`,
     ExpressionAttributeValues: {
       ':certId': cert.id,
       ':certIssued' : cert.issued,
-      ':userId': userId
+      ':userId': userId,
+      ':newStatus': 'completed',
+    },
+    ExpressionAttributeNames: {
+      '#s': 'status',
     },
     ReturnValues: 'ALL_NEW'
   };
 
   try{
+    // console.log('issue cert');
     const certResult = await dynamoDbLib.call('update', updateParams);
     //console.log('certResult', certResult);
     return certResult;
