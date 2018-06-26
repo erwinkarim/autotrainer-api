@@ -19,7 +19,8 @@ export async function main(event, context, callback) {
     // 'ExpressionAttributeValues' defines the value in the update expression
     UpdateExpression: `SET #n = :name, tagline = :tagline, description = :description, \n
       #s = :status, picture = :picture, price = :price, key_points = :key_points, bg_pic = :bg_pic, \n
-      bg_key = :bg_key, title_font_color = :title_font_color, clientList = :clientList`,
+      bg_key = :bg_key, title_font_color = :title_font_color, clientList = :clientList, \n
+      courseOptions = :course_options`,
     ConditionExpression: "userId = :userId",
     ExpressionAttributeValues: {
       ":name" : data.name ? data.name : null,
@@ -33,7 +34,8 @@ export async function main(event, context, callback) {
       ":bg_key": data.bg_key ? data.bg_key : null,
       ":title_font_color": data.title_font_color ? data.title_font_color : 'black',
       ":clientList": data.clientList  ? data.clientList : [],
-      ":userId": event.requestContext.identity.cognitoIdentityId
+      ":userId": event.requestContext.identity.cognitoIdentityId,
+      ":course_options": data.courseOptions ? data.courseOptions : {},
     },
     ExpressionAttributeNames: {
       '#n':'name',

@@ -19,7 +19,8 @@ export async function main(event, context, callback) {
       //these two will be added at patch stage
       //picture: '',
       price: 39.99,
-      createdAt: new Date().getTime()
+      createdAt: new Date().getTime(),
+      courseOptions: {},
     }
   };
 

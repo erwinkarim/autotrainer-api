@@ -83,28 +83,76 @@ var _asyncToGenerator2 = __webpack_require__(2);
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
-/**
- * purchase api using Adyen
-   plan: -
-   * create instance
-   * send data
- */
 var main = exports.main = function () {
   var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(event, context, callback) {
+    var data, params, result;
     return _regenerator2.default.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            console.log('test purchase fn');
+            data = JSON.parse(event.body);
+            /*
+              TODO: set where only owners and admins can update / delete records
+            */
 
-            callback(null, (0, _responseLib.success)({}));
+            params = {
+              TableName: "courses",
+              // 'Key' defines the partition key and sort key of the item to be updated
+              // - 'userId': Identity Pool identity id of the authenticated user
+              // - 'noteId': path parameter
+              Key: {
+                courseId: event.pathParameters.id
+                //userId: event.requestContext.identity.cognitoIdentityId
+              },
+              // 'UpdateExpression' defines the attributes to be updated
+              // 'ExpressionAttributeValues' defines the value in the update expression
+              UpdateExpression: "SET #n = :name, tagline = :tagline, description = :description, \n\n      #s = :status, picture = :picture, price = :price, key_points = :key_points, bg_pic = :bg_pic, \n\n      bg_key = :bg_key, title_font_color = :title_font_color, clientList = :clientList, \n\n      courseOptions = :course_options",
+              ConditionExpression: "userId = :userId",
+              ExpressionAttributeValues: {
+                ":name": data.name ? data.name : null,
+                ":tagline": data.tagline ? data.tagline : null,
+                ":description": data.description ? data.description : null,
+                ":status": data.status ? data.status : 'unpublished',
+                ":picture": data.picture ? data.picture : null,
+                ":price": data.price ? data.price : null,
+                ":key_points": data.key_points ? data.key_points : null,
+                ":bg_pic": data.bg_pic ? data.bg_pic : null,
+                ":bg_key": data.bg_key ? data.bg_key : null,
+                ":title_font_color": data.title_font_color ? data.title_font_color : 'black',
+                ":clientList": data.clientList ? data.clientList : [],
+                ":userId": event.requestContext.identity.cognitoIdentityId,
+                ":course_options": data.courseOptions ? data.courseOptions : {}
+              },
+              ExpressionAttributeNames: {
+                '#n': 'name',
+                '#s': 'status'
+              },
+              ReturnValues: "ALL_NEW"
+            };
+            _context.prev = 2;
+            _context.next = 5;
+            return dynamoDbLib.call("update", params);
 
-          case 2:
+          case 5:
+            result = _context.sent;
+
+            callback(null, (0, _responseLib.success)({ status: true }));
+            _context.next = 13;
+            break;
+
+          case 9:
+            _context.prev = 9;
+            _context.t0 = _context["catch"](2);
+
+            console.log(_context.t0);
+            callback(null, (0, _responseLib.failure)({ status: false }));
+
+          case 13:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, this);
+    }, _callee, this, [[2, 9]]);
   }));
 
   return function main(_x, _x2, _x3) {
@@ -121,10 +169,6 @@ var _responseLib = __webpack_require__(5);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var adyenEncrypt = __webpack_require__(7);
-var options = {};
-var cseInstance = adyenEncrypt.createEncryption("B3CA83A5FF2F8E7B535325B076FABFBAA6FC3697C8298A479980AADCDD043912", options);;
 
 /***/ }),
 /* 1 */
@@ -214,12 +258,6 @@ function buildResponse(statusCode, body) {
 /***/ (function(module, exports) {
 
 module.exports = require("babel-runtime/core-js/json/stringify");
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = require("adyen-cse-web");
 
 /***/ })
 /******/ ])));
