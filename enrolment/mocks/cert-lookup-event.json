@@ -1,0 +1,10 @@
+{
+  "queryStringParameters" : {
+    "certId": "e457a53f-1c59-4782-8343-6c5c170ab24e"
+  },
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "ap-southeast-1:c03e6df4-c25a-46c1-8c4e-dca44866038f"
+    }
+  }
+}

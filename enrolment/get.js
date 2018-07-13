@@ -2,14 +2,16 @@ import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
 
 /*
-  TODO: change the partition key to courseId
+  get the enrolment status of the course of a particular user
 */
 export async function main(event, context, callback) {
   const params = {
-    TableName: "courses",
+    TableName: "enrolment",
     // 'Key' defines the partition key and sort key of the item to be retrieved
-    // - 'noteId': path parameter
+    // - 'userId': Identity Pool identity id of the authenticated user
+    // - 'courseId': path parameter
     Key: {
+      userId: event.requestContext.identity.cognitoIdentityId,
       courseId: event.pathParameters.id
     }
   };
@@ -17,10 +19,6 @@ export async function main(event, context, callback) {
   try {
     const result = await dynamoDbLib.call("get", params);
     if (result.Item) {
-      //check publish status of this item
-      //check if you own this Item
-      //check if you are an admin and can see this item
-      //
       // Return the retrieved item
       callback(null, success(result.Item));
     } else {

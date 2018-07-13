@@ -8,24 +8,19 @@ export async function main(event, context, callback) {
 
   const params = {
     TableName: "courses",
-    // 'Item' contains the attributes of the item to be created
-    // - 'userId': user identities are federated through the
-    //             Cognito Identity Pool, we will use the identity id
-    //             as the user id of the authenticated user
-    // - 'noteId': a unique uuid
-    // - 'content': parsed from request body
-    // - 'attachment': parsed from request body
-    // - 'createdAt': current Unix timestamp
     Item: {
-      userId: event.requestContext.identity.cognitoIdentityId,
       courseId: uuid.v1(),
+      userId: event.requestContext.identity.cognitoIdentityId,
       name: data.name,
       description: data.description,
       status: 'unpublished',
+      moduleCount: 0,
+      title_font_color: 'black',
       //these two will be added at patch stage
-      //picture: data.picture_ref,
-      //price: data.price,
-      createdAt: new Date().getTime()
+      //picture: '',
+      price: 39.99,
+      createdAt: new Date().getTime(),
+      courseOptions: {},
     }
   };
 
@@ -33,6 +28,7 @@ export async function main(event, context, callback) {
     await dynamoDbLib.call("put", params);
     callback(null, success(params.Item));
   } catch (e) {
+    console.log(e);
     callback(null, failure({ status: false }));
   };
 

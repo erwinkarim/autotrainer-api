@@ -1,4 +1,4 @@
-service: autotrainer-courses-api
+service: autotrainer-modules-api
 
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
@@ -26,6 +26,11 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        # for trigger
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:ListStreams
       Resource: "arn:aws:dynamodb:ap-southeast-1:*:*"
 
 functions:
@@ -39,7 +44,7 @@ functions:
     handler: create.main
     events:
       - http:
-          path: courses
+          path: modules
           method: post
           cors: true
           authorizer: aws_iam
@@ -50,18 +55,7 @@ functions:
     handler: get.main
     events:
       - http:
-          path: courses/{id}
-          method: get
-          cors: true
-          authorizer: aws_iam
-  user:
-    # Defines an HTTP API endpoint that calls the main function in user.js
-    # - path: url path is /courses/user
-    # - method: GET request
-    handler: user.main
-    events:
-      - http:
-          path: courses/user
+          path: modules/{id}
           method: get
           cors: true
           authorizer: aws_iam
@@ -72,7 +66,7 @@ functions:
     handler: list.main
     events:
       - http:
-          path: courses
+          path: modules
           method: get
           cors: true
           authorizer: aws_iam
@@ -83,7 +77,7 @@ functions:
     handler: update.main
     events:
       - http:
-          path: courses/{id}
+          path: modules/{id}
           method: put
           cors: true
           authorizer: aws_iam
@@ -94,29 +88,18 @@ functions:
     handler: delete.main
     events:
       - http:
-          path: courses/{id}
+          path: modules/{id}
           method: delete
           cors: true
           authorizer: aws_iam
-  reorder_modules:
+  test:
     # Defines an HTTP API endpoint that calls the main function in delete.js
     # - path: url path is /notes/{id}
     # - method: DELETE request
-    handler: reorder_modules.main
+    handler: test.main
     events:
       - http:
-          path: courses/{id}/reorder_modules
-          method: post
-          cors: true
-          authorizer: aws_iam
-  purchase:
-    # Defines an HTTP API endpoint that calls the main function in delete.js
-    # - path: url path is /notes/{id}
-    # - method: DELETE request
-    handler: purchase.main
-    events:
-      - http:
-          path: courses/{id}/purchase
-          method: post
+          path: modules/test
+          method: get
           cors: true
           authorizer: aws_iam

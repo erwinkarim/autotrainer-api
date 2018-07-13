@@ -1,9 +1,9 @@
 {
   "pathParameters": {
-    "id": "06c53ac0-df0c-11e7-9283-3105385f3afa"
+    "id": "test-course"
   },
   "queryStringParameters": {
-    "courseId": "786e34c0-de39-11e7-918c-73a3bea17614"
+    "email": "erwinkarim@gmail.com"
   },
   "requestContext": {
     "identity": {

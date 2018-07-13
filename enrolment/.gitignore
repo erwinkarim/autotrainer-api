@@ -5,5 +5,8 @@ jspm_packages
 # Serverless directories
 .serverless
 
-#webpack
+# keys
+keys.json
+
+# serverless webpack, always updated when deployed
 .webpack

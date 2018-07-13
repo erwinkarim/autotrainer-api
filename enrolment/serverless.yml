@@ -1,4 +1,4 @@
-service: autotrainer-courses-api
+service: autotrainer-enrolment-api
 
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
@@ -8,6 +8,7 @@ plugins:
 custom:
   webpackIncludeModules: true
 
+
 provider:
   name: aws
   runtime: nodejs6.10
@@ -16,6 +17,7 @@ provider:
 
   # 'iamRoleStatement' defines the permission policy for the Lambda function.
   # In this case Lambda functions are granted with permissions to access DynamoDB.
+  # added access to cognito-idp to get user info
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -26,7 +28,13 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
+        - dynamodb:BatchGetItem
+        - dynamodb:BatchWriteItem
       Resource: "arn:aws:dynamodb:ap-southeast-1:*:*"
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminGetUser
+      Resource: "arn:aws:cognito-idp:ap-southeast-1:*:*"
 
 functions:
   # Defines an HTTP API endpoint that calls the main function in create.js
@@ -39,7 +47,7 @@ functions:
     handler: create.main
     events:
       - http:
-          path: courses
+          path: enrolment
           method: post
           cors: true
           authorizer: aws_iam
@@ -50,18 +58,7 @@ functions:
     handler: get.main
     events:
       - http:
-          path: courses/{id}
-          method: get
-          cors: true
-          authorizer: aws_iam
-  user:
-    # Defines an HTTP API endpoint that calls the main function in user.js
-    # - path: url path is /courses/user
-    # - method: GET request
-    handler: user.main
-    events:
-      - http:
-          path: courses/user
+          path: enrolment/{id}
           method: get
           cors: true
           authorizer: aws_iam
@@ -72,51 +69,77 @@ functions:
     handler: list.main
     events:
       - http:
-          path: courses
+          path: enrolment
           method: get
           cors: true
           authorizer: aws_iam
-  update:
-    # Defines an HTTP API endpoint that calls the main function in update.js
-    # - path: url path is /notes/{id}
-    # - method: PUT request
-    handler: update.main
+  list_invited:
+    # Defines an HTTP API endpoint that calls the main function in list.js
+    # - path: url path is /notes
+    # - method: GET request
+    handler: list_invited.main
     events:
       - http:
-          path: courses/{id}
-          method: put
+          path: enrolment/invited
+          method: get
           cors: true
           authorizer: aws_iam
-  delete:
-    # Defines an HTTP API endpoint that calls the main function in delete.js
+  students:
+    # Defines an HTTP API endpoint that calls the main function in get.js
     # - path: url path is /notes/{id}
-    # - method: DELETE request
-    handler: delete.main
+    # - method: GET request
+    handler: students.main
     events:
       - http:
-          path: courses/{id}
-          method: delete
+          path: enrolment/{id}/students
+          method: get
           cors: true
           authorizer: aws_iam
-  reorder_modules:
-    # Defines an HTTP API endpoint that calls the main function in delete.js
+  attend:
+    # Defines an HTTP API endpoint that calls the main function in get.js
     # - path: url path is /notes/{id}
-    # - method: DELETE request
-    handler: reorder_modules.main
+    # - method: GET request
+    handler: attend.main
+    environment:
+      SENDGRID_API_KEY: ${ file(./keys.json):sendgrid }
     events:
       - http:
-          path: courses/{id}/reorder_modules
+          path: enrolment/{id}/attend/{moduleId}
           method: post
           cors: true
           authorizer: aws_iam
-  purchase:
-    # Defines an HTTP API endpoint that calls the main function in delete.js
-    # - path: url path is /notes/{id}
-    # - method: DELETE request
-    handler: purchase.main
+  invite:
+    # Defines an HTTP API endpoint that calls the main function in ATTEND.js
+    # - path: url path is /enrolment/{id}/invite
+    # - method: post request
+    handler: invite.main
+    environment:
+      SENDGRID_API_KEY: ${ file(./keys.json):sendgrid }
     events:
       - http:
-          path: courses/{id}/purchase
+          path: enrolment/{id}/invite
+          method: post
+          cors: true
+          authorizer: aws_iam
+  mark_progress:
+    # Defines an HTTP API endpoint that calls the main function in ATTEND.js
+    # - path: url path is /enrolment/{id}/invite
+    # - method: post request
+    handler: mark_progress.main
+    events:
+      - http:
+          path: enrolment/{id}/mark_progress/{moduleId}
+          method: post
+          cors: true
+          authorizer: aws_iam
+  cert_lookup:
+    # Defines an HTTP API endpoint that calls the main function in ATTEND.js
+    # - path: url path is /enrolment/{id}/invite
+    # - method: post request
+    handler: cert_lookup.main
+    events:
+      - http:
+          path: enrolment/cert_lookup
           method: post
           cors: true
           authorizer: aws_iam
