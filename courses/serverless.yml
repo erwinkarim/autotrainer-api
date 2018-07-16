@@ -3,10 +3,19 @@ service: autotrainer-courses-api
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
   - serverless-webpack
+  - serverless-domain-manager
+
 
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
+  customDomain:
+    domainName: api.learn.actuarialpartners.com
+    certificateName: '*.actuarialpartners.com'
+    endpointType: 'regional'
+    basePath: courses # This will be prefixed to all routes
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 provider:
   name: aws
@@ -39,7 +48,7 @@ functions:
     handler: create.main
     events:
       - http:
-          path: courses
+          path: /
           method: post
           cors: true
           authorizer: aws_iam
@@ -50,7 +59,7 @@ functions:
     handler: get.main
     events:
       - http:
-          path: courses/{id}
+          path: /{id}
           method: get
           cors: true
           authorizer: aws_iam
@@ -61,7 +70,7 @@ functions:
     handler: user.main
     events:
       - http:
-          path: courses/user
+          path: user
           method: get
           cors: true
           authorizer: aws_iam
@@ -72,7 +81,7 @@ functions:
     handler: list.main
     events:
       - http:
-          path: courses
+          path: /
           method: get
           cors: true
           authorizer: aws_iam
@@ -83,7 +92,7 @@ functions:
     handler: update.main
     events:
       - http:
-          path: courses/{id}
+          path: /{id}
           method: put
           cors: true
           authorizer: aws_iam
@@ -94,7 +103,7 @@ functions:
     handler: delete.main
     events:
       - http:
-          path: courses/{id}
+          path: /{id}
           method: delete
           cors: true
           authorizer: aws_iam
@@ -105,7 +114,7 @@ functions:
     handler: reorder_modules.main
     events:
       - http:
-          path: courses/{id}/reorder_modules
+          path: /{id}/reorder_modules
           method: post
           cors: true
           authorizer: aws_iam
@@ -116,7 +125,7 @@ functions:
     handler: purchase.main
     events:
       - http:
-          path: courses/{id}/purchase
+          path: /{id}/purchase
           method: post
           cors: true
           authorizer: aws_iam
