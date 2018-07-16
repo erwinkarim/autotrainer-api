@@ -3,6 +3,7 @@ service: autotrainer-misc-api
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
   - serverless-webpack
+  - serverless-domain-manager
 
 # Configuration for serverless-webpack
 # Enable auto-packing of external modules
@@ -10,6 +11,13 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  customDomain:
+    domainName: api.learn.actuarialpartners.com
+    certificateName: '*.actuarialpartners.com'
+    endpointType: 'regional'
+    basePath: misc # This will be prefixed to all routes
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 provider:
   name: aws
@@ -44,7 +52,7 @@ functions:
       SENDGRID_API_KEY: ${ file(./keys.json):sendgrid }
     events:
       - http:
-          path: misc/register_email
+          path: /register_email
           method: post
           cors: true
           authorizer: aws_iam

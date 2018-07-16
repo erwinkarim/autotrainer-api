@@ -5,7 +5,6 @@ plugins:
   - serverless-webpack
   - serverless-domain-manager
 
-
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
