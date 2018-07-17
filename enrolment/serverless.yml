@@ -3,10 +3,17 @@ service: autotrainer-enrolment-api
 # Use serverless-webpack plugin to transpile ES6/ES7
 plugins:
   - serverless-webpack
+  - serverless-domain-manager
 
 # Enable auto-packing of external modules
 custom:
   webpackIncludeModules: true
+  customDomain:
+    domainName: api.learn.actuarialpartners.com
+    endpointType: 'regional'
+    basePath: enrolment # This will be prefixed to all routes
+    stage: ${self:provider.stage}
+    createRoute53Record: true
 
 
 provider:
@@ -47,7 +54,7 @@ functions:
     handler: create.main
     events:
       - http:
-          path: enrolment
+          path: /
           method: post
           cors: true
           authorizer: aws_iam
@@ -58,7 +65,7 @@ functions:
     handler: get.main
     events:
       - http:
-          path: enrolment/{id}
+          path: /{id}
           method: get
           cors: true
           authorizer: aws_iam
@@ -69,7 +76,7 @@ functions:
     handler: list.main
     events:
       - http:
-          path: enrolment
+          path: /
           method: get
           cors: true
           authorizer: aws_iam
@@ -80,7 +87,7 @@ functions:
     handler: list_invited.main
     events:
       - http:
-          path: enrolment/invited
+          path: /invited
           method: get
           cors: true
           authorizer: aws_iam
@@ -91,7 +98,7 @@ functions:
     handler: students.main
     events:
       - http:
-          path: enrolment/{id}/students
+          path: /{id}/students
           method: get
           cors: true
           authorizer: aws_iam
@@ -104,7 +111,7 @@ functions:
       SENDGRID_API_KEY: ${ file(./keys.json):sendgrid }
     events:
       - http:
-          path: enrolment/{id}/attend/{moduleId}
+          path: /{id}/attend/{moduleId}
           method: post
           cors: true
           authorizer: aws_iam
@@ -117,7 +124,7 @@ functions:
       SENDGRID_API_KEY: ${ file(./keys.json):sendgrid }
     events:
       - http:
-          path: enrolment/{id}/invite
+          path: /{id}/invite
           method: post
           cors: true
           authorizer: aws_iam
@@ -128,7 +135,7 @@ functions:
     handler: mark_progress.main
     events:
       - http:
-          path: enrolment/{id}/mark_progress/{moduleId}
+          path: /{id}/mark_progress/{moduleId}
           method: post
           cors: true
           authorizer: aws_iam
@@ -139,7 +146,7 @@ functions:
     handler: cert_lookup.main
     events:
       - http:
-          path: enrolment/cert_lookup
+          path: /cert_lookup
           method: post
           cors: true
           authorizer: aws_iam
