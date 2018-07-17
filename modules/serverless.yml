@@ -10,7 +10,6 @@ custom:
   webpackIncludeModules: true
   customDomain:
     domainName: api.learn.actuarialpartners.com
-    certificateName: '*.actuarialpartners.com'
     endpointType: 'regional'
     basePath: modules # This will be prefixed to all routes
     stage: ${self:provider.stage}
