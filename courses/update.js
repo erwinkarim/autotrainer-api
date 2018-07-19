@@ -20,7 +20,7 @@ export async function main(event, context, callback) {
     UpdateExpression: `SET #n = :name, tagline = :tagline, description = :description, \n
       #s = :status, picture = :picture, price = :price, key_points = :key_points, bg_pic = :bg_pic, \n
       bg_key = :bg_key, title_font_color = :title_font_color, clientList = :clientList, \n
-      courseOptions = :course_options`,
+      courseOptions = :course_options, coupons = :coupons`,
     ConditionExpression: "userId = :userId",
     ExpressionAttributeValues: {
       ":name" : data.name ? data.name : null,
@@ -36,6 +36,7 @@ export async function main(event, context, callback) {
       ":clientList": data.clientList  ? data.clientList : [],
       ":userId": event.requestContext.identity.cognitoIdentityId,
       ":course_options": data.courseOptions ? data.courseOptions : {},
+      ":coupons": data.coupons ? data.coupons : null,
     },
     ExpressionAttributeNames: {
       '#n':'name',

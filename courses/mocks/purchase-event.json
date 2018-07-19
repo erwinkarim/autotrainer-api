@@ -1,5 +1,8 @@
 {
-  "body": "{\"name\":\"Course Test Name\", \"description\":\"lorem ipsum blah, blah\"}",
+  "body": "{ \"code\":\"1F4EAD6979E64E6D\", \"method\": \"coupon\" }",
+  "pathParameters": {
+    "id": "6c5a8d80-f6a5-11e7-86e9-fd846e840540"
+  },
   "requestContext": {
     "identity": {
       "cognitoIdentityId": "USER-SUB-1234"

@@ -16,8 +16,10 @@ export async function main(event, context, callback) {
       status: 'unpublished',
       moduleCount: 0,
       title_font_color: 'black',
-      //these two will be added at patch stage
-      //picture: '',
+      //these will be added at patch stage
+      // picture: '',
+      // bg_pic, bg_pic_data
+      // coupons
       price: 39.99,
       createdAt: new Date().getTime(),
       courseOptions: {},
