@@ -10,18 +10,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "aws-sdk": "^2.182.0",
-    "babel-core": "^6.26.0",
+    "aws-sdk": "^2.317.0",
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-stage-3": "^6.24.1",
+    "serverless-domain-manager": "^2.6.5",
     "serverless-webpack": "^4.2.0",
     "webpack": "^3.10.0",
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "serverless-domain-manager": "^2.6.0"
+    "babel-runtime": "^6.26.0"
   }
 }

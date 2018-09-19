@@ -9,8 +9,11 @@ import { success, failure } from "./libs/response-lib";
 
 
 export async function main(event, context, callback) {
+  const data = JSON.parse(event.body);
+
   //check if the queryStringParameters exists w/ the right params
-  if( !event.queryStringParameters || !event.queryStringParameters.username ){
+  // if( !event.queryStringParameters || !event.queryStringParameters.username ){
+  if( !event.body || !data.username ){
     console.log('incorrect queryStringParameters config');
     callback(null, failure({ status: false }));
     return;
@@ -38,7 +41,8 @@ export async function main(event, context, callback) {
       TableName: 'identLookUp',
       Item: {
         identityId: event.requestContext.identity.cognitoIdentityId,
-        username: event.queryStringParameters.username
+        // username: event.queryStringParameters.username
+        username: data.username
       }
     };
 
@@ -51,7 +55,6 @@ export async function main(event, context, callback) {
       callback(null, failure({ status: false }));
       return;
     };
-
   };
 
   //something found

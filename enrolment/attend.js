@@ -112,6 +112,7 @@ export async function main(event, context, callback) {
     ProjectionExpression: "courseId, #name",
     ExpressionAttributeNames: { "#name": 'name' }
   };
+
   //console.log('courseParams', courseParams);
   var courseInfo = null;
   try{
@@ -122,8 +123,7 @@ export async function main(event, context, callback) {
       callback(null, failure());
       return;
     }
-
-  } catch(e){
+  } catch(e) {
     console.log('error getting course info');
     console.log(e);
     callback(null, failure());
@@ -169,6 +169,5 @@ export async function main(event, context, callback) {
       console.log( err.toString() );
       callback(null, failure({ status: false, error: "error sending emails" }));
     });
-
 
 }

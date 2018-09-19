@@ -9,7 +9,7 @@ plugins:
 custom:
   webpackIncludeModules: true
   customDomain:
-    domainName: api.learn.actuarialpartners.com
+    domainName: apilearn.actuarialpartners.com
     endpointType: 'regional'
     basePath: enrolment # This will be prefixed to all routes
     stage: ${self:provider.stage}

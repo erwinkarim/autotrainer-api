@@ -1,5 +1,5 @@
 {
-  "body": "{ \"inviteList\": [ {\"email\":\"erwinkarim@jomgolf.com\", \"name\":\"En. Malek\"} ], \"meta\": { \"course_owner\":\"the course owner\"} }",
+  "body": "{ \"email\":\"erwinkarim@jomgolf.com\", \"method\": \"invitedFree\" }",
   "pathParameters": {
     "id": "6caa7e10-de42-11e7-82d0-d14adfae56e0"
   },

@@ -1,10 +1,8 @@
 {
-  "queryStringParameters": {
-    "username": "USERID-SUB-1234"
-  },
+  "body": "{ \"username\": \"Google_118301224506081927841\" }",
   "requestContext": {
     "identity": {
-      "cognitoIdentityId": "USER-SUB-1234"
+      "cognitoIdentityId": "ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129"
     }
   }
 }

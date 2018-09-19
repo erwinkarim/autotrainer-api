@@ -1,6 +1,7 @@
 import uuid from "uuid";
 import * as dynamoDbLib from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
+import create_enrolment from './create_enrolment';
 
 /*
   enrol a user into the course
@@ -58,6 +59,7 @@ export async function main(event, context, callback) {
   };
 
   //create new enrolment record
+  /*
   const params = {
     TableName: "enrolment",
     Item: {
@@ -68,10 +70,13 @@ export async function main(event, context, callback) {
       status: 'enrolled'
     }
   };
+  */
 
   try {
-    await dynamoDbLib.call("put", params);
-    callback(null, success(params.Item));
+    // await dynamoDbLib.call("put", params);
+    // callback(null, success(params.Item));
+    const result = await create_enrolment(data.courseId, event.requestContext.identity.cognitoIdentityId);
+    callback(null, success(result));
   } catch (e) {
     console.log(e);
     callback(null, failure({ status: false }));
