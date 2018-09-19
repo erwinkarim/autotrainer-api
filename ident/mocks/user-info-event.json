@@ -1,0 +1,9 @@
+{
+  "something": "{ \"username\": \"Google_118301224506081927841\" }",
+  "body": "{ \"username\": \"bc7ff4cd-015e-418b-a472-6cde7e8fb3a3\" }",
+  "requestContext": {
+    "identity": {
+      "cognitoIdentityId": "ap-southeast-1:945370c4-985b-470a-8a56-562a257d6129"
+    }
+  }
+}

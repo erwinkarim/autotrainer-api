@@ -34,6 +34,10 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource: "arn:aws:dynamodb:ap-southeast-1:*:*"
+    - Effect: Allow
+      Action:
+        - cognito-idp:AdminGetUser
+      Resource: "arn:aws:cognito-idp:ap-southeast-1:*:*"
 
 
 functions:
@@ -56,6 +60,14 @@ functions:
     events:
       - http:
           path: /test
+          method: post
+          cors: true
+          authorizer: aws_iam
+  userInfo:
+    handler: userInfo.main
+    events:
+      - http:
+          path: /user_info
           method: post
           cors: true
           authorizer: aws_iam
